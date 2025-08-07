@@ -1,0 +1,67 @@
+﻿using System;
+using System.Collections.Generic;
+using STRINGS;
+using TUNING;
+using UnityEngine;
+
+// Token: 0x02000172 RID: 370
+public class FloorSwitchConfig : IBuildingConfig
+{
+	// Token: 0x06000713 RID: 1811 RVA: 0x000312EC File Offset: 0x0002F4EC
+	public override BuildingDef CreateBuildingDef()
+	{
+		string text = "FloorSwitch";
+		int num = 1;
+		int num2 = 1;
+		string text2 = "pressureswitch_kanim";
+		int num3 = 30;
+		float num4 = 30f;
+		float[] tier = global::TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER1;
+		string[] refined_METALS = MATERIALS.REFINED_METALS;
+		float num5 = 1600f;
+		BuildLocationRule buildLocationRule = BuildLocationRule.Tile;
+		EffectorValues none = NOISE_POLLUTION.NONE;
+		BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(text, num, num2, text2, num3, num4, tier, refined_METALS, num5, buildLocationRule, global::TUNING.BUILDINGS.DECOR.PENALTY.TIER0, none, 0.2f);
+		buildingDef.IsFoundation = true;
+		buildingDef.Overheatable = false;
+		buildingDef.Floodable = false;
+		buildingDef.Entombable = false;
+		buildingDef.ViewMode = OverlayModes.Logic.ID;
+		buildingDef.TileLayer = ObjectLayer.FoundationTile;
+		buildingDef.ReplacementLayer = ObjectLayer.ReplacementTile;
+		buildingDef.SceneLayer = Grid.SceneLayer.TileMain;
+		buildingDef.ConstructionOffsetFilter = BuildingDef.ConstructionOffsetFilter_OneDown;
+		buildingDef.AudioCategory = "Metal";
+		buildingDef.AudioSize = "small";
+		buildingDef.BaseTimeUntilRepair = -1f;
+		buildingDef.LogicOutputPorts = new List<LogicPorts.Port> { LogicPorts.Port.OutputPort(LogicSwitch.PORT_ID, new CellOffset(0, 0), global::STRINGS.BUILDINGS.PREFABS.LOGICSWITCH.LOGIC_PORT, global::STRINGS.BUILDINGS.PREFABS.LOGICSWITCH.LOGIC_PORT_ACTIVE, global::STRINGS.BUILDINGS.PREFABS.LOGICSWITCH.LOGIC_PORT_INACTIVE, true, false) };
+		buildingDef.AlwaysOperational = true;
+		GeneratedBuildings.RegisterWithOverlay(OverlayModes.Logic.HighlightItemIDs, "FloorSwitch");
+		return buildingDef;
+	}
+
+	// Token: 0x06000714 RID: 1812 RVA: 0x000313F5 File Offset: 0x0002F5F5
+	public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
+	{
+		BuildingConfigManager.Instance.IgnoreDefaultKComponent(typeof(RequiresFoundation), prefab_tag);
+		SimCellOccupier simCellOccupier = go.AddOrGet<SimCellOccupier>();
+		simCellOccupier.doReplaceElement = true;
+		simCellOccupier.movementSpeedMultiplier = DUPLICANTSTATS.MOVEMENT_MODIFIERS.BONUS_2;
+		simCellOccupier.notifyOnMelt = true;
+	}
+
+	// Token: 0x06000715 RID: 1813 RVA: 0x0003142C File Offset: 0x0002F62C
+	public override void DoPostConfigureComplete(GameObject go)
+	{
+		LogicMassSensor logicMassSensor = go.AddOrGet<LogicMassSensor>();
+		logicMassSensor.rangeMin = 0f;
+		logicMassSensor.rangeMax = 2000f;
+		logicMassSensor.Threshold = 10f;
+		logicMassSensor.ActivateAboveThreshold = true;
+		logicMassSensor.manuallyControlled = false;
+		go.GetComponent<KPrefabID>().AddTag(GameTags.OverlayInFrontOfConduits, false);
+	}
+
+	// Token: 0x04000553 RID: 1363
+	public const string ID = "FloorSwitch";
+}

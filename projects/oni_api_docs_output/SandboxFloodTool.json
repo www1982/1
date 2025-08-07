@@ -1,0 +1,138 @@
+{
+  "className": "SandboxFloodTool",
+  "namespace": "",
+  "baseClass": "FloodTool",
+  "interfaces": [],
+  "summary": "这是一个自定义的沙盒填充工具，继承自`FloodTool`，用于在《缺氧》游戏中修改游戏世界中的元素。它允许玩家选择元素、疾病、质量、温度以及数量，并将其应用到选定的区域。该工具与`SandboxToolParameterMenu` 界面交互，以获取和设置参数。  它还包含声音效果，并响应鼠标和键盘事件。",
+  "keyMethods": [
+    {
+      "name": "DestroyInstance",
+      "description": "销毁工具的静态实例。",
+      "parameters": [],
+      "return": "void"
+    },
+    {
+      "name": "OnPrefabInit",
+      "description": "在预制件初始化时调用。初始化填充条件和绘画区域委托。填充条件检查单元格是否有效，元素是否与鼠标选中的单元格相同，以及世界索引是否相同。绘画区域委托迭代选定的单元格并调用`PaintCell`方法。",
+      "parameters": [],
+      "return": "void"
+    },
+    {
+      "name": "PaintCell",
+      "description": "将选定的元素、疾病和其他参数应用到指定的单元格。它使用`SimMessages.ReplaceElement`来替换单元格中的元素。该方法添加一个回调函数，以便在一段时间后从`recentlyAffectedCells`中移除单元格，用于视觉效果。",
+      "parameters": [
+        {
+          "name": "cell",
+          "type": "int",
+          "description": "要修改的单元格索引。"
+        }
+      ],
+      "return": "void"
+    },
+    {
+      "name": "get_settings",
+      "description": "获取`SandboxToolParameterMenu`实例的设置。",
+      "parameters": [],
+      "return": "SandboxSettings"
+    },
+    {
+      "name": "Activate",
+      "description": "激活工具，调用`PlayerController.Instance.ActivateTool`。",
+      "parameters": [],
+      "return": "void"
+    },
+    {
+      "name": "OnActivateTool",
+      "description": "当工具被激活时调用。激活`SandboxToolParameterMenu`界面并启用相关参数滑动条。",
+      "parameters": [],
+      "return": "void"
+    },
+    {
+      "name": "OnDeactivateTool",
+      "description": "当工具被停用时调用。停用`SandboxToolParameterMenu`界面并释放声音事件。",
+      "parameters": [
+        {
+          "name": "new_tool",
+          "type": "InterfaceTool",
+          "description": "新的激活工具。"
+        }
+      ],
+      "return": "void"
+    },
+    {
+      "name": "GetOverlayColorData",
+      "description": "获取用于工具覆盖层的颜色数据。",
+      "parameters": [
+        {
+          "name": "colors",
+          "type": "out HashSet<ToolMenu.CellColorData>",
+          "description": "输出参数，包含单元格颜色数据。"
+        }
+      ],
+      "return": "void"
+    },
+    {
+      "name": "OnMouseMove",
+      "description": "当鼠标移动时调用。更新将要影响的单元格列表。",
+      "parameters": [
+        {
+          "name": "cursorPos",
+          "type": "Vector3",
+          "description": "鼠标位置。"
+        }
+      ],
+      "return": "void"
+    },
+    {
+      "name": "OnLeftClickDown",
+      "description": "当鼠标左键按下时调用。播放相应的声音效果，根据所选元素的类型（固体、气体、液体）播放不同的声音。",
+      "parameters": [
+        {
+          "name": "cursor_pos",
+          "type": "Vector3",
+          "description": "鼠标位置。"
+        }
+      ],
+      "return": "void"
+    },
+    {
+      "name": "OnKeyDown",
+      "description": "当键盘按键按下时调用。处理`SandboxCopyElement`操作，允许玩家复制单元格的元素样本。",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "KButtonEvent",
+          "description": "按键事件。"
+        }
+      ],
+      "return": "void"
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "instance",
+      "type": "SandboxFloodTool",
+      "description": "工具的静态实例。"
+    },
+    {
+      "name": "recentlyAffectedCells",
+      "type": "HashSet<int>",
+      "description": "最近受影响的单元格集合，用于视觉反馈。"
+    },
+    {
+      "name": "cellsToAffect",
+      "type": "HashSet<int>",
+      "description": "将要受影响的单元格集合。"
+    },
+    {
+      "name": "recentlyAffectedCellColor",
+      "type": "Color",
+      "description": "最近受影响单元格的覆盖颜色。"
+    },
+    {
+      "name": "ev",
+      "type": "EventInstance",
+      "description": "FMOD声音事件实例。"
+    }
+  ]
+}

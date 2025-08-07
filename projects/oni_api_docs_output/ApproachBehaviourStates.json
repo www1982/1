@@ -1,0 +1,104 @@
+{
+  "className": "ApproachBehaviourStates",
+  "namespace": "",
+  "baseClass": "GameStateMachine<ApproachBehaviourStates, ApproachBehaviourStates.Instance, IStateMachineTarget, ApproachBehaviourStates.Def>",
+  "interfaces": [],
+  "summary": "This class manages the state machine for duplicant approach behaviors in Oxygen Not Included. It defines states for approaching a target, interacting with it, and handling failures.  It uses a `GameStateMachine` framework, common in ONI modding for managing entity behaviors.  The states include approach, interaction (with pre, loop, and post animation stages), and failure.  Target acquisition and reservation are handled within the state machine.",
+  "keyMethods": [
+    {
+      "name": "InitializeStates",
+      "description": "Initializes the states of the approach behavior state machine.  Sets up transitions between approach, interact, and failure states, including event handling (e.g., `GameHashes.ApproachableTargetChanged`), animation playback, and resource reservation/unreservation.  Uses callbacks to access and modify the state machine instance and its associated data.",
+      "parameters": [
+        {
+          "name": "default_state",
+          "type": "StateMachine.BaseState",
+          "description": "The default state of the state machine."
+        }
+      ],
+      "return": "void"
+    },
+    {
+      "name": "Reserve",
+      "description": "Reserves the target using a specified tag if a reserveTag is defined in the Def.  This is crucial for preventing resource conflicts between duplicants.",
+      "parameters": [
+        {
+          "name": "smi",
+          "type": "ApproachBehaviourStates.Instance",
+          "description": "The instance of the state machine."
+        }
+      ],
+      "return": "void"
+    },
+    {
+      "name": "Unreserve",
+      "description": "Unreserves the target using a specified tag if a reserveTag is defined and a valid target exists. This cleans up after a successful or failed approach.",
+      "parameters": [
+        {
+          "name": "smi",
+          "type": "ApproachBehaviourStates.Instance",
+          "description": "The instance of the state machine."
+        }
+      ],
+      "return": "void"
+    },
+    {
+      "name": "RefreshTarget",
+      "description": "Refreshes the target GameObject for the state machine. If the target is null, transitions to the failure state. Updates target offsets.",
+      "parameters": [
+        {
+          "name": "smi",
+          "type": "ApproachBehaviourStates.Instance",
+          "description": "The instance of the state machine."
+        }
+      ],
+      "return": "void"
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "interact",
+      "type": "ApproachBehaviourStates.InteractState",
+      "description": "The interaction state of the state machine. Contains nested states for pre-interaction, looping interaction, and post-interaction animations."
+    },
+    {
+      "name": "behaviourComplete",
+      "type": "GameStateMachine<ApproachBehaviourStates, ApproachBehaviourStates.Instance, IStateMachineTarget, ApproachBehaviourStates.Def>.State",
+      "description": "The state indicating the behaviour is complete."
+    },
+    {
+      "name": "approach",
+      "type": "GameStateMachine<ApproachBehaviourStates, ApproachBehaviourStates.Instance, IStateMachineTarget, ApproachBehaviourStates.Def>.ApproachSubState<IApproachable>",
+      "description": "The state representing the approach phase towards the target."
+    },
+    {
+      "name": "failure",
+      "type": "GameStateMachine<ApproachBehaviourStates, ApproachBehaviourStates.Instance, IStateMachineTarget, ApproachBehaviourStates.Def>.State",
+      "description": "The failure state of the state machine."
+    },
+    {
+      "name": "self",
+      "type": "StateMachine<ApproachBehaviourStates, ApproachBehaviourStates.Instance, IStateMachineTarget, ApproachBehaviourStates.Def>.TargetParameter",
+      "description": "Target parameter representing the self (the actor approaching)."
+    },
+    {
+      "name": "target",
+      "type": "StateMachine<ApproachBehaviourStates, ApproachBehaviourStates.Instance, IStateMachineTarget, ApproachBehaviourStates.Def>.TargetParameter",
+      "description": "Target parameter representing the target the actor is approaching."
+    },
+    {
+      "name": "Def",
+      "type": "ApproachBehaviourStates.Def",
+      "description": "Configuration class for the approach behavior.  Contains tags (monitorId, behaviourTag, reserveTag) and animation names (preAnim, loopAnim, pstAnim).  Provides parameters to customize approach behavior for different entities or actions."
+    },
+    {
+      "name": "InteractState",
+      "type": "ApproachBehaviourStates.InteractState",
+      "description": "Represents the interaction phase, further broken down into pre, loop, and post animation states."
+    },
+    {
+      "name": "Instance",
+      "type": "ApproachBehaviourStates.Instance",
+      "description": "Game instance of the state machine.  Handles interaction with game objects and monitors.  Contains methods for retrieving and setting the associated monitor (likely for managing approach behavior). It also includes a `targetOffsets` property, likely used for precision targeting."
+    }
+  ]
+}

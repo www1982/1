@@ -32,7 +32,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run PyInstaller
-        run: pyinstaller --onefile --noconsole projects/modtest/1.py
+        run: pyinstaller --onefile projects/modtest/1.py
 
       - name: Determine Artifact Info
         id: artifact_info

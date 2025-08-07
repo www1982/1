@@ -1,0 +1,62 @@
+﻿using System;
+using TUNING;
+using UnityEngine;
+
+// Token: 0x0200021D RID: 541
+public class GasConduitBridgeConfig : IBuildingConfig
+{
+	// Token: 0x06000AD7 RID: 2775 RVA: 0x000412D8 File Offset: 0x0003F4D8
+	public override BuildingDef CreateBuildingDef()
+	{
+		string text = "GasConduitBridge";
+		int num = 3;
+		int num2 = 1;
+		string text2 = "utilitygasbridge_kanim";
+		int num3 = 10;
+		float num4 = 3f;
+		float[] tier = BUILDINGS.CONSTRUCTION_MASS_KG.TIER1;
+		string[] raw_MINERALS = MATERIALS.RAW_MINERALS;
+		float num5 = 1600f;
+		BuildLocationRule buildLocationRule = BuildLocationRule.Conduit;
+		EffectorValues none = NOISE_POLLUTION.NONE;
+		BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(text, num, num2, text2, num3, num4, tier, raw_MINERALS, num5, buildLocationRule, BUILDINGS.DECOR.NONE, none, 0.2f);
+		buildingDef.ObjectLayer = ObjectLayer.GasConduitConnection;
+		buildingDef.SceneLayer = Grid.SceneLayer.GasConduitBridges;
+		buildingDef.InputConduitType = ConduitType.Gas;
+		buildingDef.OutputConduitType = ConduitType.Gas;
+		buildingDef.Floodable = false;
+		buildingDef.Entombable = false;
+		buildingDef.Overheatable = false;
+		buildingDef.ViewMode = OverlayModes.GasConduits.ID;
+		buildingDef.AudioCategory = "Metal";
+		buildingDef.AudioSize = "small";
+		buildingDef.BaseTimeUntilRepair = -1f;
+		buildingDef.PermittedRotations = PermittedRotations.R360;
+		buildingDef.UtilityInputOffset = new CellOffset(-1, 0);
+		buildingDef.UtilityOutputOffset = new CellOffset(1, 0);
+		GeneratedBuildings.RegisterWithOverlay(OverlayScreen.GasVentIDs, buildingDef.PrefabID);
+		return buildingDef;
+	}
+
+	// Token: 0x06000AD8 RID: 2776 RVA: 0x000413AF File Offset: 0x0003F5AF
+	public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
+	{
+		GeneratedBuildings.MakeBuildingAlwaysOperational(go);
+		BuildingConfigManager.Instance.IgnoreDefaultKComponent(typeof(RequiresFoundation), prefab_tag);
+		go.AddOrGet<ConduitBridge>().type = ConduitType.Gas;
+	}
+
+	// Token: 0x06000AD9 RID: 2777 RVA: 0x000413D8 File Offset: 0x0003F5D8
+	public override void DoPostConfigureComplete(GameObject go)
+	{
+		global::UnityEngine.Object.DestroyImmediate(go.GetComponent<RequireInputs>());
+		global::UnityEngine.Object.DestroyImmediate(go.GetComponent<ConduitConsumer>());
+		global::UnityEngine.Object.DestroyImmediate(go.GetComponent<ConduitDispenser>());
+	}
+
+	// Token: 0x04000771 RID: 1905
+	public const string ID = "GasConduitBridge";
+
+	// Token: 0x04000772 RID: 1906
+	private const ConduitType CONDUIT_TYPE = ConduitType.Gas;
+}

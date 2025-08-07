@@ -1,0 +1,204 @@
+{
+  "className": "MovePickupableChore",
+  "namespace": "",
+  "baseClass": "Chore<MovePickupableChore.StatesInstance>",
+  "interfaces": [],
+  "summary": "这是一个Chore（任务）类，负责将可拾取物品（Pickupable）移动到目标位置。它处理了小人（Duplicant）拾取和放置物品的逻辑，包括对生物（Critter）的特殊处理。该Chore使用GameStateMachine来管理其状态，并根据物品类型（普通物品或生物）设置不同的前提条件和行为。",
+  "keyMethods": [
+    {
+      "name": "MovePickupableChore",
+      "description": "构造函数，初始化Chore。根据物品是否为生物（Critter），设置不同的Chore类型和前提条件。设置目标位置、物品来源和搬运者。订阅可达性变化事件。",
+      "parameters": [
+        {
+          "name": "target",
+          "type": "IStateMachineTarget",
+          "description": "物品的目标位置。"
+        },
+        {
+          "name": "pickupable",
+          "type": "GameObject",
+          "description": "需要移动的可拾取物品。"
+        },
+        {
+          "name": "onEnd",
+          "type": "Action<Chore>",
+          "description": "Chore结束时的回调函数。"
+        }
+      ]
+    },
+    {
+      "name": "OnReachableChanged",
+      "description": "响应可达性变化事件。根据可达性改变目标位置的视觉效果颜色。",
+      "parameters": [
+        {
+          "name": "data",
+          "type": "object",
+          "description": "表示可达性的布尔值。"
+        }
+      ]
+    },
+    {
+      "name": "SetColor",
+      "description": "设置目标位置的视觉效果颜色。",
+      "parameters": [
+        {
+          "name": "visualizer",
+          "type": "GameObject",
+          "description": "目标位置的视觉效果对象。"
+        },
+        {
+          "name": "color",
+          "type": "Color",
+          "description": "目标位置的颜色。"
+        }
+      ]
+    },
+    {
+      "name": "Begin",
+      "description": "Chore开始执行时的回调函数。设置搬运者（deliverer）并调用基类的Begin方法。包含对null值的检查，以提高程序健壮性。",
+      "parameters": [
+        {
+          "name": "context",
+          "type": "Chore.Precondition.Context",
+          "description": "Chore的前置条件上下文。"
+        }
+      ]
+    },
+    {
+      "name": "GetNavTactic",
+      "description": "根据搬运者是否为Fetch Drone（采集无人机）选择合适的导航策略。",
+      "parameters": [
+        {
+          "name": "smi",
+          "type": "MovePickupableChore.StatesInstance",
+          "description": "Chore的状态机实例。"
+        }
+      ]
+    },
+    {
+      "name": "DropPickupable",
+      "description": "将可拾取物品放置到目标存储区域。对生物和普通物品采用不同的处理方式。",
+      "parameters": [
+        {
+          "name": "storage",
+          "type": "Storage",
+          "description": "目标存储区域。"
+        },
+        {
+          "name": "delivered",
+          "type": "GameObject",
+          "description": "被放置的物品。"
+        }
+      ]
+    },
+    {
+      "name": "IsDeliveryComplete",
+      "description": "检查物品是否已完全放置到目标存储区域。",
+      "parameters": [
+        {
+          "name": "smi",
+          "type": "MovePickupableChore.StatesInstance",
+          "description": "Chore的状态机实例。"
+        }
+      ]
+    },
+    {
+      "name": "IsCritter",
+      "description": "检查物品是否为生物（Critter）。",
+      "parameters": [
+        {
+          "name": "smi",
+          "type": "MovePickupableChore.StatesInstance",
+          "description": "Chore的状态机实例。"
+        }
+      ]
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "movePlacer",
+      "type": "GameObject",
+      "description": "用于显示移动路径的视觉效果对象。"
+    },
+    {
+      "name": "CanReachCritter",
+      "type": "Chore.Precondition",
+      "description": "一个自定义的前置条件，检查小人是否可以到达生物。"
+    },
+    {
+      "name": "StatesInstance",
+      "type": "class",
+      "description": "Chore状态机的实例类。"
+    },
+    {
+      "name": "States",
+      "type": "class",
+      "description": "定义Chore状态机的类，包含各个状态的定义和转换逻辑。 使用了GameStateMachine框架，包含多种状态，例如：fetch(获取), approach(接近), pickup(拾取), approachstorage(接近存储区), delivering(运送), success(成功), deliverfail(运送失败)。 其中，对生物和普通物品的处理逻辑有所不同。 "
+    },
+    {
+      "name": "critterCellOffsets",
+      "type": "CellOffset[]",
+      "description": "生物（Critter）的单元格偏移量，用于寻路。"
+    },
+    {
+      "name": "critterReleaseWorkAnims",
+      "type": "HashedString[]",
+      "description": "生物释放时的动画名称。"
+    },
+    {
+      "name": "critterReleaseAnim",
+      "type": "KAnimFile[]",
+      "description": "生物释放时的动画文件。"
+    },
+    {
+      "name": "deliverer",
+      "type": "StateMachine<MovePickupableChore.States, MovePickupableChore.StatesInstance, MovePickupableChore, object>.TargetParameter",
+      "description": "搬运物品的小人。"
+    },
+    {
+      "name": "pickupablesource",
+      "type": "StateMachine<MovePickupableChore.States, MovePickupableChore.StatesInstance, MovePickupableChore, object>.TargetParameter",
+      "description": "物品的来源。"
+    },
+    {
+      "name": "pickup",
+      "type": "StateMachine<MovePickupableChore.States, MovePickupableChore.StatesInstance, MovePickupableChore, object>.TargetParameter",
+      "description": "当前被拾取的物品。"
+    },
+    {
+      "name": "deliverypoint",
+      "type": "StateMachine<MovePickupableChore.States, MovePickupableChore.StatesInstance, MovePickupableChore, object>.TargetParameter",
+      "description": "物品的目标位置。"
+    },
+    {
+      "name": "requestedamount",
+      "type": "StateMachine<MovePickupableChore.States, MovePickupableChore.StatesInstance, MovePickupableChore, object>.FloatParameter",
+      "description": "请求搬运的物品数量。"
+    },
+    {
+      "name": "actualamount",
+      "type": "StateMachine<MovePickupableChore.States, MovePickupableChore.StatesInstance, MovePickupableChore, object>.FloatParameter",
+      "description": "实际搬运的物品数量。"
+    },
+    {
+      "name": "fetch",
+      "type": "MovePickupableChore.States.FetchState",
+      "description": "获取物品状态。"
+    },
+    {
+      "name": "approachstorage",
+      "type": "MovePickupableChore.States.ApproachStorage",
+      "description": "接近存储区域状态。"
+    },
+    {
+      "name": "success",
+      "type": "GameStateMachine<MovePickupableChore.States, MovePickupableChore.StatesInstance, MovePickupableChore, object>.State",
+      "description": "任务成功状态。"
+    },
+    {
+      "name": "delivering",
+      "type": "MovePickupableChore.States.DeliveryState",
+      "description": "运送物品状态。"
+    }
+  ]
+}

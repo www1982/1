@@ -1,0 +1,206 @@
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+// Token: 0x020007FF RID: 2047
+[AddComponentMenu("KMonoBehaviour/scripts/CO2Manager")]
+public class CO2Manager : KMonoBehaviour, ISim33ms
+{
+	// Token: 0x060037B6 RID: 14262 RVA: 0x00134FBC File Offset: 0x001331BC
+	public static void DestroyInstance()
+	{
+		CO2Manager.instance = null;
+	}
+
+	// Token: 0x060037B7 RID: 14263 RVA: 0x00134FC4 File Offset: 0x001331C4
+	protected override void OnPrefabInit()
+	{
+		CO2Manager.instance = this;
+		this.prefab.gameObject.SetActive(false);
+		this.breathPrefab.SetActive(false);
+		this.co2Pool = new GameObjectPool(new Func<GameObject>(this.InstantiateCO2), 16);
+		this.breathPool = new GameObjectPool(new Func<GameObject>(this.InstantiateBreath), 16);
+	}
+
+	// Token: 0x060037B8 RID: 14264 RVA: 0x00135026 File Offset: 0x00133226
+	private GameObject InstantiateCO2()
+	{
+		GameObject gameObject = GameUtil.KInstantiate(this.prefab, Grid.SceneLayer.Front, null, 0);
+		gameObject.SetActive(false);
+		return gameObject;
+	}
+
+	// Token: 0x060037B9 RID: 14265 RVA: 0x0013503E File Offset: 0x0013323E
+	private GameObject InstantiateBreath()
+	{
+		GameObject gameObject = GameUtil.KInstantiate(this.breathPrefab, Grid.SceneLayer.Front, null, 0);
+		gameObject.SetActive(false);
+		return gameObject;
+	}
+
+	// Token: 0x060037BA RID: 14266 RVA: 0x00135058 File Offset: 0x00133258
+	public void Sim33ms(float dt)
+	{
+		Vector2I vector2I = default(Vector2I);
+		Vector2I vector2I2 = default(Vector2I);
+		Vector3 vector = this.acceleration * dt;
+		int num = this.co2Items.Count;
+		for (int i = 0; i < num; i++)
+		{
+			CO2 co = this.co2Items[i];
+			co.velocity += vector;
+			co.lifetimeRemaining -= dt;
+			Grid.PosToXY(co.transform.GetPosition(), out vector2I);
+			co.transform.SetPosition(co.transform.GetPosition() + co.velocity * dt);
+			Grid.PosToXY(co.transform.GetPosition(), out vector2I2);
+			int num2 = Grid.XYToCell(vector2I.x, vector2I.y);
+			for (int j = vector2I.y; j >= vector2I2.y; j--)
+			{
+				int num3 = Grid.XYToCell(vector2I.x, j);
+				bool flag = !Grid.IsValidCell(num3) || co.lifetimeRemaining <= 0f;
+				if (!flag)
+				{
+					Element element = Grid.Element[num3];
+					flag = element.IsLiquid || element.IsSolid || (Grid.Properties[num3] & 1) > 0;
+				}
+				if (flag)
+				{
+					int num4 = num3;
+					bool flag2 = false;
+					if (num2 != num3)
+					{
+						num4 = num2;
+						flag2 = true;
+					}
+					else
+					{
+						bool flag3 = false;
+						int num5 = -1;
+						int num6 = -1;
+						foreach (CellOffset cellOffset in GasBreatherFromWorldProvider.DEFAULT_BREATHABLE_OFFSETS)
+						{
+							int num7 = Grid.OffsetCell(num3, cellOffset);
+							if (Grid.IsValidCell(num7))
+							{
+								Element element2 = Grid.Element[num7];
+								if (element2.id == SimHashes.CarbonDioxide || element2.HasTag(GameTags.Breathable))
+								{
+									num5 = num7;
+									flag3 = true;
+									flag2 = true;
+									break;
+								}
+								if (element2.IsGas)
+								{
+									num6 = num7;
+									flag2 = true;
+								}
+							}
+						}
+						if (flag2)
+						{
+							if (flag3)
+							{
+								num4 = num5;
+							}
+							else
+							{
+								num4 = num6;
+							}
+						}
+					}
+					if (flag2)
+					{
+						co.TriggerDestroy();
+						SimMessages.ModifyMass(num4, co.mass, byte.MaxValue, 0, CellEventLogger.Instance.CO2ManagerFixedUpdate, co.temperature, SimHashes.CarbonDioxide);
+						num--;
+						this.co2Items[i] = this.co2Items[num];
+						this.co2Items.RemoveAt(num);
+						break;
+					}
+				}
+				num2 = num3;
+			}
+		}
+	}
+
+	// Token: 0x060037BB RID: 14267 RVA: 0x001352D8 File Offset: 0x001334D8
+	public void SpawnCO2(Vector3 position, float mass, float temperature, bool flip)
+	{
+		position.z = Grid.GetLayerZ(Grid.SceneLayer.Front);
+		GameObject gameObject = this.co2Pool.GetInstance();
+		gameObject.transform.SetPosition(position);
+		gameObject.SetActive(true);
+		CO2 component = gameObject.GetComponent<CO2>();
+		component.mass = mass;
+		component.temperature = temperature;
+		component.velocity = Vector3.zero;
+		component.lifetimeRemaining = 3f;
+		KBatchedAnimController component2 = component.GetComponent<KBatchedAnimController>();
+		component2.TintColour = this.tintColour;
+		component2.onDestroySelf = new Action<GameObject>(this.OnDestroyCO2);
+		component2.FlipX = flip;
+		component.StartLoop();
+		this.co2Items.Add(component);
+	}
+
+	// Token: 0x060037BC RID: 14268 RVA: 0x00135380 File Offset: 0x00133580
+	public void SpawnBreath(Vector3 position, float mass, float temperature, bool flip)
+	{
+		position.z = Grid.GetLayerZ(Grid.SceneLayer.Front);
+		this.SpawnCO2(position, mass, temperature, flip);
+		GameObject gameObject = this.breathPool.GetInstance();
+		gameObject.transform.SetPosition(position);
+		gameObject.SetActive(true);
+		KBatchedAnimController component = gameObject.GetComponent<KBatchedAnimController>();
+		component.TintColour = this.tintColour;
+		component.onDestroySelf = new Action<GameObject>(this.OnDestroyBreath);
+		component.FlipX = flip;
+		component.Play("breath", KAnim.PlayMode.Once, 1f, 0f);
+	}
+
+	// Token: 0x060037BD RID: 14269 RVA: 0x0013540F File Offset: 0x0013360F
+	private void OnDestroyCO2(GameObject co2_go)
+	{
+		co2_go.SetActive(false);
+		this.co2Pool.ReleaseInstance(co2_go);
+	}
+
+	// Token: 0x060037BE RID: 14270 RVA: 0x00135424 File Offset: 0x00133624
+	private void OnDestroyBreath(GameObject breath_go)
+	{
+		breath_go.SetActive(false);
+		this.breathPool.ReleaseInstance(breath_go);
+	}
+
+	// Token: 0x040021CA RID: 8650
+	private const float CO2Lifetime = 3f;
+
+	// Token: 0x040021CB RID: 8651
+	[SerializeField]
+	private Vector3 acceleration;
+
+	// Token: 0x040021CC RID: 8652
+	[SerializeField]
+	private CO2 prefab;
+
+	// Token: 0x040021CD RID: 8653
+	[SerializeField]
+	private GameObject breathPrefab;
+
+	// Token: 0x040021CE RID: 8654
+	[SerializeField]
+	private Color tintColour;
+
+	// Token: 0x040021CF RID: 8655
+	private List<CO2> co2Items = new List<CO2>();
+
+	// Token: 0x040021D0 RID: 8656
+	private GameObjectPool breathPool;
+
+	// Token: 0x040021D1 RID: 8657
+	private GameObjectPool co2Pool;
+
+	// Token: 0x040021D2 RID: 8658
+	public static CO2Manager instance;
+}

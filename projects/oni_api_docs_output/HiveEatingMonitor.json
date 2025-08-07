@@ -1,0 +1,58 @@
+{
+  "className": "HiveEatingMonitor",
+  "namespace": "?",
+  "baseClass": "GameStateMachine<HiveEatingMonitor, HiveEatingMonitor.Instance, IStateMachineTarget, HiveEatingMonitor.Def>",
+  "interfaces": [],
+  "summary": "这是一个游戏状态机，用于控制游戏中某种生物（例如某种群居生物）的进食行为。该状态机基于`GameStateMachine`，管理生物是否应该进食特定类型的矿物。它通过检查生物的存储空间中是否存在目标矿物来决定其进食行为。",
+  "keyMethods": [
+    {
+      "name": "InitializeStates",
+      "description": "初始化状态机。将根状态设置为默认状态，并使用`ShouldEat`方法作为条件来切换生物的进食行为（`GameTags.Creatures.WantsToEat`）。",
+      "parameters": [
+        {
+          "name": "default_state",
+          "type": "StateMachine.BaseState",
+          "description": "默认状态。"
+        }
+      ],
+      "return": "void"
+    },
+    {
+      "name": "ShouldEat",
+      "description": "判断生物是否应该进食。通过检查生物的存储空间(`storage`)中是否存在定义的矿物(`def.consumedOre`)来确定。",
+      "parameters": [
+        {
+          "name": "smi",
+          "type": "HiveEatingMonitor.Instance",
+          "description": "状态机实例。"
+        }
+      ],
+      "return": "bool",
+      "returnDescription": "如果找到目标矿物则返回true，否则返回false。"
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "Def",
+      "description": "嵌套类，定义了生物进食行为的配置。包含一个`consumedOre`属性，指定生物需要消耗的矿物类型。这是一个`Tag`类型，在《缺氧》中用于标识游戏中的各种物品。",
+      "properties": [
+        {
+          "name": "consumedOre",
+          "type": "Tag",
+          "description": "生物需要消耗的矿物类型。"
+        }
+      ]
+    },
+    {
+      "name": "Instance",
+      "description": "嵌套类，表示状态机的实例。包含一个`storage`属性，表示生物的存储空间，用于查找目标矿物。`[MyCmpReq]`属性表示这个组件需要附加到拥有存储空间的实体上。",
+      "properties": [
+        {
+          "name": "storage",
+          "type": "Storage",
+          "description": "生物的存储空间。"
+        }
+      ]
+    }
+  ]
+}

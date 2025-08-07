@@ -1,0 +1,42 @@
+{
+  "className": "PropLightConfig",
+  "namespace": "",
+  "baseClass": "IEntityConfig",
+  "interfaces": [
+    "IEntityConfig"
+  ],
+  "summary": "配置一个名为\"PropLight\"的游戏内装饰性照明道具。该类继承自IEntityConfig接口，用于定义游戏内可放置实体的配置。它利用EntityTemplates创建游戏对象，设置其基本属性，例如材质、温度、占用区域、可拆卸性等。  该道具主要用于装饰，并产生噪音污染。",
+  "keyMethods": [
+    {
+      "name": "CreatePrefab",
+      "description": "创建并返回PropLight的GameObject。该方法使用EntityTemplates.CreatePlacedEntity创建游戏对象，设置名称、描述、质量、动画、场景层级、尺寸、装饰值、旋转、方向、噪音污染等级、主要元素（钢）、初始温度以及占用区域等属性。  这部分代码负责生成游戏内实际可放置的照明道具。",
+      "returnType": "GameObject",
+      "parameters": []
+    },
+    {
+      "name": "OnPrefabInit",
+      "description": "在预制体初始化时调用。此方法目前为空，预留用于在预制体创建后进行额外的初始化操作。",
+      "returnType": "void",
+      "parameters": [
+        {
+          "name": "inst",
+          "type": "GameObject",
+          "description": "已创建的PropLight预制体"
+        }
+      ]
+    },
+    {
+      "name": "OnSpawn",
+      "description": "在游戏世界中生成该预制体时调用。此方法目前为空，预留用于在预制体生成后进行额外的设置或操作。",
+      "returnType": "void",
+      "parameters": [
+        {
+          "name": "inst",
+          "type": "GameObject",
+          "description": "已生成的PropLight游戏对象"
+        }
+      ]
+    }
+  ],
+  "keyProperties": []
+}

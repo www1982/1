@@ -1,0 +1,221 @@
+{
+  "className": "Moppable",
+  "namespace": null,
+  "baseClass": "Workable",
+  "interfaces": [
+    "ISim1000ms",
+    "ISim200ms"
+  ],
+  "summary": "Represents a moppable area in the game.  This class manages the interaction of duplicants mopping liquid spills, integrating with the game's chore system, liquid simulation, and user interface. It handles the visual representation of the mop, its interaction with liquid chunks, and the display of relevant status messages to the player.",
+  "keyMethods": [
+    {
+      "methodName": "OnPrefabInit",
+      "description": "Initializes the moppable area upon prefab creation.  Sets up references to necessary game data, such as the mopping status item, tidying speed attribute, and skill experience.",
+      "parameters": []
+    },
+    {
+      "methodName": "OnSpawn",
+      "description": "Initializes the moppable area when it's placed in the game world.  Checks for the presence of liquid, creates a work chore for duplicants, adds it to the game's grid system and sets up event listeners for liquid changes and reachability.",
+      "parameters": []
+    },
+    {
+      "methodName": "OnRefreshUserMenu",
+      "description": "Adds a 'Cancel Mop' button to the user menu when a moppable area is selected.",
+      "parameters": [
+        {
+          "parameterName": "data",
+          "description": "Event data (not used in this method)."
+        }
+      ]
+    },
+    {
+      "methodName": "OnCancel",
+      "description": "Handles the cancellation of the mopping action by the player.  Closes the details screen and triggers an event.",
+      "parameters": []
+    },
+    {
+      "methodName": "OnStartWork",
+      "description": "Called when a duplicant starts mopping. Adds this object to the simulation scheduler and initiates the mopping process.",
+      "parameters": [
+        {
+          "parameterName": "worker",
+          "description": "The duplicant performing the work."
+        }
+      ]
+    },
+    {
+      "methodName": "OnStopWork",
+      "description": "Called when a duplicant stops mopping. Removes this object from the simulation scheduler.",
+      "parameters": [
+        {
+          "parameterName": "worker",
+          "description": "The duplicant who stopped working."
+        }
+      ]
+    },
+    {
+      "methodName": "OnCompleteWork",
+      "description": "Called when the mopping task is complete. Removes this object from the simulation scheduler.",
+      "parameters": [
+        {
+          "parameterName": "worker",
+          "description": "The duplicant who completed the work."
+        }
+      ]
+    },
+    {
+      "methodName": "InstantlyFinish",
+      "description": "Allows for instantly completing the mopping task, useful for debugging or other special cases.",
+      "parameters": [
+        {
+          "parameterName": "worker",
+          "description": "The duplicant triggering the instant finish."
+        }
+      ]
+    },
+    {
+      "methodName": "Sim1000ms",
+      "description": "Simulation update called every 1000ms. Handles visual effects for the amount of liquid mopped.",
+      "parameters": [
+        {
+          "parameterName": "dt",
+          "description": "The time delta."
+        }
+      ]
+    },
+    {
+      "methodName": "Sim200ms",
+      "description": "Simulation update called every 200ms.  Refreshes the moppable area's state and performs a mopping tick.",
+      "parameters": [
+        {
+          "parameterName": "dt",
+          "description": "The time delta."
+        }
+      ]
+    },
+    {
+      "methodName": "OnCellMopped",
+      "description": "Callback function triggered when a cell is mopped. Creates a liquid chunk representing the mopped liquid.",
+      "parameters": [
+        {
+          "parameterName": "mass_cb_info",
+          "description": "Information about the consumed mass."
+        },
+        {
+          "parameterName": "data",
+          "description": "Event data (not used in this method)."
+        }
+      ]
+    },
+    {
+      "methodName": "MopCell",
+      "description": "Static method to mop a single cell.  Handles the consumption of liquid mass from a cell.",
+      "parameters": [
+        {
+          "parameterName": "cell",
+          "description": "The grid cell to mop."
+        },
+        {
+          "parameterName": "amount",
+          "description": "The amount of liquid to mop."
+        },
+        {
+          "parameterName": "cb",
+          "description": "Callback function for mass consumption."
+        }
+      ]
+    },
+    {
+      "methodName": "MopTick",
+      "description": "Performs a single mopping tick, applying the mopping action to adjacent cells.",
+      "parameters": [
+        {
+          "parameterName": "mopAmount",
+          "description": "The amount of liquid to mop per tick."
+        }
+      ]
+    },
+    {
+      "methodName": "IsThereLiquid",
+      "description": "Checks if there is any liquid within the moppable area's range.",
+      "parameters": []
+    },
+    {
+      "methodName": "Refresh",
+      "description": "Refreshes the state of the moppable area, checking for liquid and scheduling self-destruction if no liquid is present.",
+      "parameters": []
+    },
+    {
+      "methodName": "OnLiquidChanged",
+      "description": "Handles liquid changes within the moppable area's range, triggering a refresh.",
+      "parameters": [
+        {
+          "parameterName": "data",
+          "description": "Event data (not used in this method)."
+        }
+      ]
+    },
+    {
+      "methodName": "TryDestroy",
+      "description": "Attempts to destroy the moppable object.",
+      "parameters": []
+    },
+    {
+      "methodName": "OnCleanUp",
+      "description": "Cleanup method called when the game object is being destroyed. Frees resources associated with the game scene partitioner.",
+      "parameters": []
+    },
+    {
+      "methodName": "OnReachableChanged",
+      "description": "Handles changes in reachability of the moppable area. Updates the visual representation and adds/removes status items accordingly.  Potentially triggers a locomotion tutorial.",
+      "parameters": [
+        {
+          "parameterName": "data",
+          "description": "Boolean indicating if the mop is now reachable."
+        }
+      ]
+    }
+  ],
+  "keyProperties": [
+    {
+      "propertyName": "amountMoppedPerTick",
+      "description": "The amount of liquid mopped per tick.",
+      "type": "float"
+    },
+    {
+      "propertyName": "partitionerEntry",
+      "description": "Handle for the game scene partitioner entry.",
+      "type": "HandleVector<int>.Handle"
+    },
+    {
+      "propertyName": "destroyHandle",
+      "description": "Scheduler handle for self-destruction.",
+      "type": "SchedulerHandle"
+    },
+    {
+      "propertyName": "amountMopped",
+      "description": "The total amount of liquid mopped.",
+      "type": "float"
+    },
+    {
+      "propertyName": "childRenderer",
+      "description": "Mesh renderer component of the child object.",
+      "type": "MeshRenderer"
+    },
+    {
+      "propertyName": "offsets",
+      "description": "Array of cell offsets representing the area the mop can reach.",
+      "type": "CellOffset[]"
+    },
+    {
+      "propertyName": "OnRefreshUserMenuDelegate",
+      "description": "Delegate for handling user menu refresh events.",
+      "type": "EventSystem.IntraObjectHandler<Moppable>"
+    },
+    {
+      "propertyName": "OnReachableChangedDelegate",
+      "description": "Delegate for handling reachability change events.",
+      "type": "EventSystem.IntraObjectHandler<Moppable>"
+    }
+  ]
+}

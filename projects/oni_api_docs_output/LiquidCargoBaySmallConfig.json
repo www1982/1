@@ -1,0 +1,44 @@
+{
+  "className": "LiquidCargoBaySmallConfig",
+  "namespace": null,
+  "baseClass": "IBuildingConfig",
+  "interfaces": [
+    "IBuildingConfig"
+  ],
+  "summary": "配置小型液体货舱建筑的类。该类继承自IBuildingConfig接口，用于在《缺氧》游戏中定义和配置一个小型液体货舱。它定义了货舱的属性，例如尺寸、材质、容量、连接点等，并扩展了其与火箭模块和货物系统的集成。该货舱属于扩张1DLC的内容。",
+  "keyMethods": [
+    {
+      "name": "GetRequiredDlcIds",
+      "description": "返回该建筑所需的DLC ID。此货舱需要Expansion1 DLC。",
+      "returnType": "string[]"
+    },
+    {
+      "name": "CreateBuildingDef",
+      "description": "创建并配置建筑的BuildingDef。此方法定义了货舱的尺寸(3x3), 图像资源, 重量, 材料, 容量, 位置规则, 噪音污染等级, 场景层级, 过热温度等关键属性。此外, 它还将货舱标记为可以移动, 不可取消, 并将其附加到火箭上。",
+      "returnType": "BuildingDef"
+    },
+    {
+      "name": "ConfigureBuildingTemplate",
+      "description": "配置建筑的GameObject模板。此方法忽略了默认的地基需求, 添加了循环音效组件, 将其标记为工业机械, 并定义了一个连接到火箭的连接点(0,3)。",
+      "returnType": "void"
+    },
+    {
+      "name": "DoPostConfigureComplete",
+      "description": "在建筑配置完成后执行的额外配置。此方法扩展了建筑以支持集群货物舱功能，并将其设置为液体货物类型，并将其与火箭模块集群相连，定义其负重等级为MINOR_PLUS。",
+      "returnType": "void"
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "ID",
+      "description": "小型液体货舱的唯一标识符。",
+      "type": "string",
+      "isConst": true
+    },
+    {
+      "name": "CAPACITY",
+      "description": "货舱的液体容量，基于ROCKETRY.CARGO_CAPACITY_SCALE进行缩放。",
+      "type": "float"
+    }
+  ]
+}

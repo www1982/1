@@ -1,0 +1,63 @@
+{
+  "className": "ElectrobankConfig",
+  "namespace": null,
+  "baseClass": null,
+  "interfaces": [
+    "IEntityConfig",
+    "IHasDlcRestrictions"
+  ],
+  "summary": "ElectrobankConfig类配置了游戏《缺氧》中一种名为Electrobank的可充电电池的各项属性。它继承了IEntityConfig接口，用于创建游戏中的实体，并实现了IHasDlcRestrictions接口，用于指定DLC依赖。该类定义了Electrobank的ID、质量、电力容量以及其制作配方。  该物品属于工业产品，可放置在展台上展示，并占用1x1的面积。装饰度惩罚为最低等级。",
+  "keyMethods": [
+    {
+      "name": "GetRequiredDlcIds",
+      "description": "返回Electrobank所需的DLC ID，这里是DLC3，意味着该物品需要DLC3才能在游戏中出现。",
+      "returnType": "string[]"
+    },
+    {
+      "name": "GetForbiddenDlcIds",
+      "description": "返回Electrobank禁止的DLC ID，这里是null，意味着该物品不受任何DLC的限制（除了必需的DLC3）。",
+      "returnType": "string[]"
+    },
+    {
+      "name": "CreatePrefab",
+      "description": "创建Electrobank的预制体GameObject。该方法定义了Electrobank的名称、描述、质量、碰撞体形状、动画、所在图层以及其他属性，例如添加了可充电和可展示的标签。如果GameTags.ChargedPortableBattery标签不可计数，则添加计数功能。该方法还添加了占地面积、装饰度和可充电组件。",
+      "returnType": "GameObject"
+    },
+    {
+      "name": "OnPrefabInit",
+      "description": "预制体初始化后的回调函数，当前为空，可以用于进行额外的初始化操作。",
+      "returnType": "void"
+    },
+    {
+      "name": "OnSpawn",
+      "description": "实体在游戏中生成后的回调函数，当前为空，可以用于执行生成后的操作。",
+      "returnType": "void"
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "ID",
+      "description": "Electrobank的唯一标识符。",
+      "type": "string",
+      "isConst": true
+    },
+    {
+      "name": "MASS",
+      "description": "Electrobank的质量，单位可能是kg。",
+      "type": "float",
+      "isConst": true
+    },
+    {
+      "name": "POWER_CAPACITY",
+      "description": "Electrobank的电力容量，单位可能是瓦特小时。",
+      "type": "float",
+      "isConst": true
+    },
+    {
+      "name": "recipe",
+      "description": "Electrobank的制作配方，类型为ComplexRecipe。",
+      "type": "ComplexRecipe",
+      "isStatic": true
+    }
+  ]
+}

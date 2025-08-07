@@ -1,0 +1,41 @@
+{
+  "className": "LogicRadiationSensorConfig",
+  "namespace": null,
+  "baseClass": "IBuildingConfig",
+  "interfaces": [
+    "IBuildingConfig"
+  ],
+  "summary": "配置辐射传感器建筑的类。该传感器是一个逻辑组件，检测辐射水平并输出逻辑信号。它属于扩张包1的内容。",
+  "keyMethods": [
+    {
+      "name": "GetRequiredDlcIds",
+      "description": "返回该建筑所需DLC的ID，这里是扩张包1。",
+      "returnType": "string[]"
+    },
+    {
+      "name": "CreateBuildingDef",
+      "description": "创建辐射传感器的建筑定义。该方法定义了建筑的各项属性，包括尺寸、材质、外观、建造规则、声音效果、逻辑端口等。它利用`BuildingTemplates.CreateBuildingDef`创建基础定义，并设置其属性如`Overheatable`, `Floodable`, `Entombable`, `ViewMode`, `AudioCategory`, `SceneLayer`, `AlwaysOperational`，以及添加逻辑输出端口，最终注册到逻辑覆盖层中。",
+      "returnType": "BuildingDef"
+    },
+    {
+      "name": "DoPostConfigureComplete",
+      "description": "在建筑GameObject配置完成后执行的操作。此方法将建筑设置为非手动控制，并添加一个标签以确保其显示在管道前面。",
+      "returnType": "void",
+      "parameters": [
+        {
+          "name": "go",
+          "type": "GameObject",
+          "description": "表示辐射传感器的游戏对象。"
+        }
+      ]
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "ID",
+      "description": "辐射传感器的唯一标识符。",
+      "type": "string",
+      "isStatic": true
+    }
+  ]
+}

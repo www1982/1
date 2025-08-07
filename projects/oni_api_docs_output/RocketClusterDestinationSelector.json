@@ -1,0 +1,148 @@
+{
+  "className": "RocketClusterDestinationSelector",
+  "namespace": "",
+  "baseClass": "ClusterDestinationSelector",
+  "interfaces": [],
+  "summary": "管理火箭在星系集群中的目的地选择。此类扩展了 `ClusterDestinationSelector`，增加了对重复行程和资源/文物收集的支持。它追踪火箭的出发点和目的地，并协调在到达目的地后返回出发点的机制。  它与 `LaunchPad`、`Clustercraft` 和资源/文物收集模块交互，以确保火箭能够有效地进行资源收集和运输。",
+  "keyMethods": [
+    {
+      "name": "OnPrefabInit",
+      "description": "在预制件初始化时订阅 `OnLaunch` 事件。",
+      "params": [],
+      "return": "void"
+    },
+    {
+      "name": "OnSpawn",
+      "description": "在对象生成时，如果正在进行资源收集，则调用 `WaitForPOIHarvest` 函数。",
+      "params": [],
+      "return": "void"
+    },
+    {
+      "name": "GetDestinationPad",
+      "description": "根据给定的坐标或当前目的地获取火箭的目的地发射台。",
+      "params": [
+        {
+          "name": "destination",
+          "type": "AxialI",
+          "description": "可选的AxialI坐标，默认为当前目的地。"
+        }
+      ],
+      "return": "LaunchPad"
+    },
+    {
+      "name": "SetDestination",
+      "description": "设置火箭的目的地（继承自基类，在此类中可能添加了附加逻辑）。",
+      "params": [
+        {
+          "name": "location",
+          "type": "AxialI",
+          "description": "火箭的新目的地。"
+        }
+      ],
+      "return": "void"
+    },
+    {
+      "name": "SetDestinationPad",
+      "description": "设置火箭的目的地发射台，并触发 `ClusterDestinationChanged` 事件。",
+      "params": [
+        {
+          "name": "pad",
+          "type": "LaunchPad",
+          "description": "火箭的目的地发射台。"
+        }
+      ],
+      "return": "void"
+    },
+    {
+      "name": "OnClusterLocationChanged",
+      "description": "当火箭的集群位置改变时触发。如果到达目的地，则触发 `ClusterDestinationReached` 事件，并在重复行程模式下设置返回行程。",
+      "params": [
+        {
+          "name": "data",
+          "type": "object",
+          "description": "包含新位置信息的 `ClusterLocationChangedEvent` 对象。"
+        }
+      ],
+      "return": "void"
+    },
+    {
+      "name": "SetUpReturnTrip",
+      "description": "设置火箭的返回行程，将之前的目的地设置为新的目的地。",
+      "params": [],
+      "return": "void"
+    },
+    {
+      "name": "CanRocketHarvest",
+      "description": "检查火箭是否可以进行资源或文物收集。",
+      "params": [],
+      "return": "bool"
+    },
+    {
+      "name": "OnStorageChange",
+      "description": "当火箭的存储发生变化时触发，用于检测是否完成资源收集。",
+      "params": [
+        {
+          "name": "data",
+          "type": "object",
+          "description": "事件数据。"
+        }
+      ],
+      "return": "void"
+    },
+    {
+      "name": "WaitForPOIHarvest",
+      "description": "等待POI(Point Of Interest)的资源收集完成。",
+      "params": [],
+      "return": "void"
+    },
+    {
+      "name": "OnLaunch",
+      "description": "在火箭发射时记录之前的发射台和目的地。",
+      "params": [
+        {
+          "name": "data",
+          "type": "object",
+          "description": "事件数据。"
+        }
+      ],
+      "return": "void"
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "Repeat",
+      "type": "bool",
+      "description": "指示火箭是否应该重复行程。"
+    },
+    {
+      "name": "m_launchPad",
+      "type": "Dictionary<int, Ref<LaunchPad>>",
+      "description": "存储每个小行星世界ID对应的发射台。"
+    },
+    {
+      "name": "m_repeat",
+      "type": "bool",
+      "description": "内部变量，表示是否重复行程。"
+    },
+    {
+      "name": "m_prevDestination",
+      "type": "AxialI",
+      "description": "火箭之前的目的地。"
+    },
+    {
+      "name": "m_prevLaunchPad",
+      "type": "Ref<LaunchPad>",
+      "description": "火箭之前的发射台。"
+    },
+    {
+      "name": "isHarvesting",
+      "type": "bool",
+      "description": "指示火箭当前是否正在进行资源收集。"
+    },
+    {
+      "name": "OnLaunchDelegate",
+      "type": "EventSystem.IntraObjectHandler<RocketClusterDestinationSelector>",
+      "description": "处理火箭发射事件的委托。"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "className": "StorageMeter",
+  "namespace": null,
+  "baseClass": "KMonoBehaviour",
+  "interfaces": [],
+  "summary": "这是一个用于显示储物容器填充程度的组件。它使用 `MeterController` 来渲染一个视觉化的计量器，并根据储物容器 (`Storage`) 中存储的质量与容量的比例更新计量器的显示。该组件允许自定义插值函数来控制计量器值的平滑过渡。  它订阅了一个事件 (hash -1697596308,  可能与Storage组件的更新事件相关)，并在该事件触发时更新计量器的显示。",
+  "keyMethods": [
+    {
+      "name": "SetInterpolateFunction",
+      "description": "设置计量器值的插值函数。此函数控制计量器数值变化的平滑度。  该函数接收当前百分比和一个整数参数(用途未知，可能与动画帧率或其他内部参数相关)，并返回一个插值后的浮点数。",
+      "parameters": [
+        {
+          "name": "func",
+          "type": "Func<float, int, float>",
+          "description": "自定义插值函数。"
+        }
+      ],
+      "return": "void"
+    },
+    {
+      "name": "OnPrefabInit",
+      "description": "在预制件初始化时调用。此方法继承自 `KMonoBehaviour`，在此类中没有特殊实现，仅调用基类的 `OnPrefabInit()` 方法。",
+      "parameters": [],
+      "return": "void"
+    },
+    {
+      "name": "OnSpawn",
+      "description": "在游戏对象生成时调用。此方法初始化 `MeterController`，并将其绑定到游戏对象上的 `KBatchedAnimController` 组件，并设置动画名称和偏移量。 它还订阅了一个事件来更新计量器。",
+      "parameters": [],
+      "return": "void"
+    },
+    {
+      "name": "UpdateMeter",
+      "description": "更新计量器的显示，根据储物容器中存储的质量与容量的比例设置计量器的百分比。此方法被事件 -1697596308 触发。",
+      "parameters": [
+        {
+          "name": "data",
+          "type": "object",
+          "description": "事件数据，在此方法中未被使用。"
+        }
+      ],
+      "return": "void"
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "storage",
+      "type": "Storage",
+      "description": "通过 `[MyCmpGet]` 属性获取的储物容器组件。  `MyCmpGet` 是一个自定义属性，用于从游戏对象获取组件。",
+      "accessModifier": "private"
+    },
+    {
+      "name": "meter",
+      "type": "MeterController",
+      "description": "用于渲染计量器的控制器。",
+      "accessModifier": "private"
+    },
+    {
+      "name": "interpolateFunction",
+      "type": "Func<float, int, float>",
+      "description": "用于控制计量器值插值的函数，默认使用 `MeterController.MinMaxStepLerp`。",
+      "accessModifier": "private"
+    }
+  ]
+}

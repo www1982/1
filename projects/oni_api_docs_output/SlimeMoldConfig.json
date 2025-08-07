@@ -1,0 +1,27 @@
+{
+  "className": "SlimeMoldConfig",
+  "namespace": null,
+  "baseClass": "IOreConfig",
+  "interfaces": [],
+  "summary": "该类配置了游戏中的史莱姆模具(Slime Mold)资源。它继承自IOreConfig，表明它是一种矿物资源的配置类。该类定义了史莱姆模具的元素ID、升华后的元素ID以及创建史莱姆模具游戏物体的工厂方法。  这对于《缺氧》Mod开发者而言，代表着自定义或修改史莱姆模具资源的入口。",
+  "keyMethods": [
+    {
+      "methodName": "CreatePrefab",
+      "summary": "创建史莱姆模具的游戏物体预设。使用EntityTemplates.CreateSolidOreEntity创建基础的矿物实体，然后添加Sublimates组件来定义其升华特性。  升华后的产物为受污染的氧气(ContaminatedOxygen)，并设置了相应的特效和参数。  这是Mod开发者修改史莱姆模具模型、升华效果的关键方法。",
+      "parameters": [],
+      "returnType": "UnityEngine.GameObject"
+    }
+  ],
+  "keyProperties": [
+    {
+      "propertyName": "ElementID",
+      "summary": "史莱姆模具的元素ID，类型为SimHashes。  这是一个内部标识符，用于游戏内部识别该物质。对于Mod开发者来说，它表示史莱姆模具在游戏数据中的唯一标识。",
+      "returnType": "SimHashes"
+    },
+    {
+      "propertyName": "SublimeElementID",
+      "summary": "史莱姆模具升华后的元素ID，类型为SimHashes。  表示史莱姆模具在特定条件下（例如高温）会转化成的物质，这里是受污染的氧气。  对于Mod开发者，这决定了史莱姆模具升华后的行为和产物。",
+      "returnType": "SimHashes"
+    }
+  ]
+}

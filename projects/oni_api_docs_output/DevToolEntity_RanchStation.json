@@ -1,0 +1,64 @@
+{
+  "className": "DevToolEntity_RanchStation",
+  "namespace": null,
+  "baseClass": "DevTool",
+  "interfaces": [],
+  "summary": "一个用于调试游戏内牧场站(RanchStation)的开发者工具。该工具允许开发者选择一个牧场站目标，并检查其状态机、相关可放牧生物以及其他调试信息。它利用ImGui库进行界面渲染，并提供一个选项来绘制目标对象及其可放牧生物的边界框。",
+  "keyMethods": [
+    {
+      "name": "RenderTo",
+      "description": "将牧场站调试信息渲染到开发者面板。该方法包含一个菜单项，允许选择新的目标牧场站。它显示所选牧场站的状态机信息(实例和定义)，绘制可放牧生物集合，并可以选择绘制边界框。如果目标无效，则显示相应的错误信息。",
+      "parameters": [
+        {
+          "name": "panel",
+          "type": "DevPanel",
+          "description": "用于渲染调试信息的开发者面板。"
+        }
+      ],
+      "returnType": "void"
+    },
+    {
+      "name": "DrawRanchableCollection",
+      "description": "绘制指定可放牧生物集合的调试信息。该方法迭代每个可放牧生物，显示其名称，并提供一个按钮用于进行更详细的检查。如果集合为空或为null，则显示相应信息。",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "string",
+          "description": "集合的名称，用于ImGui CollapsingHeader。"
+        },
+        {
+          "name": "ranchables",
+          "type": "IEnumerable<RanchableMonitor.Instance>",
+          "description": "要绘制的可放牧生物集合。"
+        }
+      ],
+      "returnType": "void",
+      "static": true
+    },
+    {
+      "name": "GetErrorForCandidateTarget",
+      "description": "检查给定目标是否是一个有效的牧场站游戏对象，并返回错误信息（如果有）。  它验证目标是否为WorldGameObject，以及目标对象及其RanchStation.Def是否有效。",
+      "parameters": [
+        {
+          "name": "uncastTarget",
+          "type": "DevToolEntityTarget",
+          "description": "待检查的目标。"
+        }
+      ],
+      "returnType": "Option<string>",
+      "static": true
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "targetOpt",
+      "type": "Option<DevToolEntityTarget.ForWorldGameObject>",
+      "description": "可选的牧场站游戏对象目标。"
+    },
+    {
+      "name": "shouldDrawBoundingBox",
+      "type": "bool",
+      "description": "一个布尔值，指示是否应该绘制边界框。"
+    }
+  ]
+}

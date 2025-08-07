@@ -1,0 +1,40 @@
+{
+  "className": "LogicPortSpriteType",
+  "namespace": "",
+  "baseClass": "System.Enum",
+  "interfaces": [],
+  "summary": "枚举类型，定义了《缺氧》游戏中逻辑端口的精灵类型。用于区分不同类型的逻辑端口，例如输入、输出、重置更新等，以便在游戏中正确渲染和标识不同的端口功能。  这对于Mod开发者来说至关重要，因为它直接影响到自定义建筑或设备的逻辑端口的视觉表现。通过选择合适的枚举值，Mod可以创建具有不同外观和功能的逻辑端口。",
+  "keyMethods": [],
+  "keyProperties": [
+    {
+      "name": "Input",
+      "type": "LogicPortSpriteType",
+      "summary": "表示逻辑端口的输入类型。用于接收来自其他组件的信号。"
+    },
+    {
+      "name": "Output",
+      "type": "LogicPortSpriteType",
+      "summary": "表示逻辑端口的输出类型。用于向其他组件发送信号。"
+    },
+    {
+      "name": "ResetUpdate",
+      "type": "LogicPortSpriteType",
+      "summary": "表示逻辑端口的重置更新类型。可能用于重置计数器或触发更新操作。"
+    },
+    {
+      "name": "ControlInput",
+      "type": "LogicPortSpriteType",
+      "summary": "表示逻辑端口的控制输入类型。可能用于控制设备的行为。"
+    },
+    {
+      "name": "RibbonInput",
+      "type": "LogicPortSpriteType",
+      "summary": "表示逻辑端口的带状输入类型。可能用于处理更复杂的数据流或信号。"
+    },
+    {
+      "name": "RibbonOutput",
+      "type": "LogicPortSpriteType",
+      "summary": "表示逻辑端口的带状输出类型。可能用于输出更复杂的数据流或信号。"
+    }
+  ]
+}

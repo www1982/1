@@ -1,0 +1,20 @@
+{
+  "className": "LaunchableRocketRegisterType",
+  "namespace": "Unknown",
+  "baseClass": "System.Enum",
+  "interfaces": [],
+  "summary": "枚举类型，表示可发射火箭的注册类型。在《缺氧》Mod开发中，用于区分不同类型的可发射火箭，例如单人航天器和集群航天器。这可能是用于火箭发射相关的自定义建筑或系统配置。  Mod开发者可以通过这个枚举来定义和识别不同类型的火箭，并根据类型执行不同的操作。例如，可以根据火箭类型来调整资源消耗、发射条件或目标地点。",
+  "keyMethods": [],
+  "keyProperties": [
+    {
+      "name": "Spacecraft",
+      "type": "LaunchableRocketRegisterType",
+      "summary": "表示单人航天器的火箭注册类型。"
+    },
+    {
+      "name": "Clustercraft",
+      "type": "LaunchableRocketRegisterType",
+      "summary": "表示集群航天器的火箭注册类型。"
+    }
+  ]
+}

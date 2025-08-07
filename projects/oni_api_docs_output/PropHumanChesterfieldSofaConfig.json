@@ -1,0 +1,38 @@
+{
+  "className": "PropHumanChesterfieldSofaConfig",
+  "namespace": null,
+  "baseClass": "object",
+  "interfaces": [
+    "IEntityConfig",
+    "IHasDlcRestrictions"
+  ],
+  "summary": "此类配置了游戏中的一个装饰物：'PropHumanChesterfieldSofa'（人型切斯特菲尔德沙发）。它继承自`IEntityConfig`，负责创建游戏对象，并实现`IHasDlcRestrictions`接口，以管理DLC相关的限制。该沙发是一个放置型实体，具有装饰属性、噪音污染属性，以及占用区域等特性。它使用花岗岩材质，并设定了初始温度。",
+  "keyMethods": [
+    {
+      "name": "GetRequiredDlcIds",
+      "description": "返回此配置所需的DLC ID列表。这里返回`DlcManager.DLC2`，表示该沙发需要DLC2才能在游戏中出现。",
+      "returnType": "string[]"
+    },
+    {
+      "name": "GetForbiddenDlcIds",
+      "description": "返回此配置禁止使用的DLC ID列表。这里返回`null`，表示没有禁止的DLC。",
+      "returnType": "string[]"
+    },
+    {
+      "name": "CreatePrefab",
+      "description": "创建并配置游戏对象。该方法创建了一个沙发游戏对象，设置了名称、描述、装饰度、噪音污染级别、材质（花岗岩）、温度，并添加了`Demolishable`组件（可拆卸）。该方法利用了`EntityTemplates.CreatePlacedEntity`来简化创建过程，这在《缺氧》Modding中非常常见。",
+      "returnType": "GameObject"
+    },
+    {
+      "name": "OnPrefabInit",
+      "description": "在预制件初始化后调用。此方法设置了沙发占用的区域层级为`ObjectLayer.Building`。",
+      "returnType": "void"
+    },
+    {
+      "name": "OnSpawn",
+      "description": "在游戏对象生成后调用。此方法目前为空，无任何操作。",
+      "returnType": "void"
+    }
+  ],
+  "keyProperties": []
+}

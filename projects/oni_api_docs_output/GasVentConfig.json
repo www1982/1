@@ -1,0 +1,63 @@
+{
+  "className": "GasVentConfig",
+  "namespace": null,
+  "baseClass": "IBuildingConfig",
+  "interfaces": [
+    "IBuildingConfig"
+  ],
+  "summary": "配置气体排放口建筑物的类。继承自IBuildingConfig接口，用于在《缺氧》游戏中定义和配置一个新的建筑物。该气体排放口允许气体从管道网络中排出，并具有过压保护机制。",
+  "keyMethods": [
+    {
+      "methodName": "CreateBuildingDef",
+      "summary": "创建气体排放口建筑物的定义。此方法设置建筑物的各种属性，例如名称、大小、材质、建造规则、噪音污染级别、以及其与气体管道的连接方式。它利用BuildingTemplates.CreateBuildingDef方法创建BuildingDef实例，并设置其InputConduitType为ConduitType.Gas，表示它连接到气体管道。此外，它还设置了Floodable为false，Overheatable为false，以及ViewMode为OverlayModes.GasConduits.ID，方便在游戏中进行查看。",
+      "parameters": [],
+      "returnType": "BuildingDef"
+    },
+    {
+      "methodName": "ConfigureBuildingTemplate",
+      "summary": "配置气体排放口建筑物的游戏对象模板。此方法在游戏对象中添加必要的组件，例如LoopingSounds（循环声音）、Exhaust（排气）、LogicOperationalController（逻辑控制）、Vent（排气口）、ConduitConsumer（管道消耗器）和SimpleVent（简易排气口）。它还配置Vent组件的conduitType为ConduitType.Gas，endpointType为Endpoint.Sink，以及overpressureMass为2f。此外，它还创建了一个默认的存储区域，并将其显示在UI中。",
+      "parameters": [
+        {
+          "parameterName": "go",
+          "parameterType": "GameObject"
+        },
+        {
+          "parameterName": "prefab_tag",
+          "parameterType": "Tag"
+        }
+      ],
+      "returnType": "void"
+    },
+    {
+      "methodName": "DoPostConfigureComplete",
+      "summary": "在建筑物配置完成后执行的额外配置。此方法在游戏对象中添加VentController.Def，并添加GameTags.OverlayInFrontOfConduits标签，确保其在管道前面显示。",
+      "parameters": [
+        {
+          "parameterName": "go",
+          "parameterType": "GameObject"
+        }
+      ],
+      "returnType": "void"
+    }
+  ],
+  "keyProperties": [
+    {
+      "propertyName": "ID",
+      "summary": "气体排放口的唯一标识符。",
+      "type": "string",
+      "isConst": true
+    },
+    {
+      "propertyName": "OVERPRESSURE_MASS",
+      "summary": "气体排放口的过压阀门触发质量。",
+      "type": "float",
+      "isConst": true
+    },
+    {
+      "propertyName": "CONDUIT_TYPE",
+      "summary": "气体排放口连接的管道类型，固定为ConduitType.Gas。",
+      "type": "ConduitType",
+      "isConst": true
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "className": "NotificationValence",
+  "namespace": null,
+  "baseClass": "System.Enum",
+  "interfaces": [],
+  "summary": "枚举类型，定义了通知的效价（Valence），用于表示通知对Duplicant（小人）情绪的影响。在《缺氧》Mod开发中，用于处理游戏内事件的反馈，例如资源不足、环境危险或积极事件等，从而影响小人情绪和行为。  不同的效价会影响小人心情，进而影响其工作效率和整体殖民地稳定性。  例如，'Good' 的通知会提升心情，而 'DuplicantThreatening'  则可能导致恐慌或负面反应。",
+  "keyMethods": [],
+  "keyProperties": [
+    {
+      "name": "Good",
+      "type": "NotificationValence",
+      "summary": "表示积极的通知，会提升Duplicant的心情。"
+    },
+    {
+      "name": "Neutral",
+      "type": "NotificationValence",
+      "summary": "表示中性的通知，对Duplicant的心情没有显著影响。"
+    },
+    {
+      "name": "BadMinor",
+      "type": "NotificationValence",
+      "summary": "表示轻微负面的通知，会略微降低Duplicant的心情。"
+    },
+    {
+      "name": "Bad",
+      "type": "NotificationValence",
+      "summary": "表示负面的通知，会显著降低Duplicant的心情。"
+    },
+    {
+      "name": "DuplicantThreatening",
+      "type": "NotificationValence",
+      "summary": "表示对Duplicant构成威胁的通知，可能引发强烈的负面情绪反应，例如恐慌。"
+    }
+  ]
+}

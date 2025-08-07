@@ -1,0 +1,159 @@
+{
+  "className": "FindAndConsumeOxygenSourceChore",
+  "namespace": "",
+  "baseClass": "Chore<FindAndConsumeOxygenSourceChore.Instance>",
+  "interfaces": [],
+  "summary": "This chore represents a duplicant's action of finding and consuming an oxygen source, such as an oxygen canister, to replenish their bionic oxygen tank.  It utilizes a state machine to manage the different stages of the chore, from searching for a source to consuming its contents.  The chore's criticality determines its priority; critical chores take precedence over personal needs.  It interacts with `BionicOxygenTankMonitor` to manage the oxygen tank and its available space.  The chore handles various scenarios, including the case where the oxygen source is lost during the process.",
+  "keyMethods": [
+    {
+      "name": "FindAndConsumeOxygenSourceChore",
+      "description": "Constructor. Initializes the chore based on whether it's critical and sets up preconditions.",
+      "parameters": [
+        {
+          "name": "target",
+          "type": "IStateMachineTarget",
+          "description": "The target duplicant."
+        },
+        {
+          "name": "critical",
+          "type": "bool",
+          "description": "Indicates if the chore is critical (high priority)."
+        }
+      ]
+    },
+    {
+      "name": "Begin",
+      "description": "Starts the chore. Finds the closest oxygen source and updates the state machine with relevant information.",
+      "parameters": [
+        {
+          "name": "context",
+          "type": "Chore.Precondition.Context",
+          "description": "Context information for the chore."
+        }
+      ]
+    },
+    {
+      "name": "IsNotAllowedByScheduleAndChoreIsNotCritical",
+      "description": "Checks if the chore is allowed by the schedule and is not critical.",
+      "parameters": [
+        {
+          "name": "smi",
+          "type": "FindAndConsumeOxygenSourceChore.Instance",
+          "description": "The chore instance."
+        }
+      ],
+      "return": "bool"
+    },
+    {
+      "name": "IsAllowedBySchedule",
+      "description": "Checks if the chore is allowed based on the schedule.",
+      "parameters": [
+        {
+          "name": "smi",
+          "type": "FindAndConsumeOxygenSourceChore.Instance",
+          "description": "The chore instance."
+        }
+      ],
+      "return": "bool"
+    },
+    {
+      "name": "IsCriticalChore",
+      "description": "Checks if the chore is critical.",
+      "parameters": [
+        {
+          "name": "smi",
+          "type": "FindAndConsumeOxygenSourceChore.Instance",
+          "description": "The chore instance."
+        }
+      ],
+      "return": "bool"
+    },
+    {
+      "name": "ExtractOxygenFromItem",
+      "description": "Extracts oxygen from the consumed item and adds it to the duplicant's oxygen tank, handling gases and solids differently.",
+      "parameters": [
+        {
+          "name": "smi",
+          "type": "FindAndConsumeOxygenSourceChore.Instance",
+          "description": "The chore instance."
+        }
+      ]
+    },
+    {
+      "name": "SetOverrideAnimSymbol",
+      "description": "Manages animation symbols to visually represent the oxygen consumption.",
+      "parameters": [
+        {
+          "name": "smi",
+          "type": "FindAndConsumeOxygenSourceChore.Instance",
+          "description": "The chore instance."
+        },
+        {
+          "name": "overriding",
+          "type": "bool",
+          "description": "Indicates whether to override the animation."
+        }
+      ]
+    },
+    {
+      "name": "TriggerOxygenItemLostSignal",
+      "description": "Triggers a signal indicating the oxygen source was lost.",
+      "parameters": [
+        {
+          "name": "smi",
+          "type": "FindAndConsumeOxygenSourceChore.Instance",
+          "description": "The chore instance."
+        }
+      ]
+    },
+    {
+      "name": "GetConsumeDuration",
+      "description": "Calculates the duration of the oxygen consumption based on the amount needed.",
+      "parameters": [
+        {
+          "name": "smi",
+          "type": "FindAndConsumeOxygenSourceChore.Instance",
+          "description": "The chore instance."
+        }
+      ],
+      "return": "float"
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "OxygenSourceItemIsNotNull",
+      "type": "Chore.Precondition",
+      "description": "A precondition checking for a valid oxygen source with available amount."
+    },
+    {
+      "name": "CANISTER_BODY_SYMBOL_NAME",
+      "type": "string",
+      "description": "Constant representing the animation symbol for the canister body."
+    },
+    {
+      "name": "CANISTER_CAP_SYMBOL_NAME",
+      "type": "string",
+      "description": "Constant representing the animation symbol for the canister cap."
+    },
+    {
+      "name": "CANISTER_CAP_COLOR_SYMBOL_NAME",
+      "type": "string",
+      "description": "Constant representing the animation symbol for the canister cap color."
+    },
+    {
+      "name": "CANISTER_BODY_COLOR_SYMBOL_NAME",
+      "type": "string",
+      "description": "Constant representing the animation symbol for the canister body color."
+    },
+    {
+      "name": "MAX_LOOP_DURATION",
+      "type": "float",
+      "description": "Maximum duration of the consumption animation loop."
+    },
+    {
+      "name": "MIN_LOOP_DURATION",
+      "type": "float",
+      "description": "Minimum duration of the consumption animation loop."
+    }
+  ]
+}

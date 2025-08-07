@@ -1,0 +1,43 @@
+﻿using System;
+using System.Collections.Generic;
+using STRINGS;
+using TUNING;
+using UnityEngine;
+
+// Token: 0x02000384 RID: 900
+public class PropElevatorConfig : IEntityConfig
+{
+	// Token: 0x0600126E RID: 4718 RVA: 0x0006AD5C File Offset: 0x00068F5C
+	public GameObject CreatePrefab()
+	{
+		string text = "PropElevator";
+		string text2 = global::STRINGS.BUILDINGS.PREFABS.PROPELEVATOR.NAME;
+		string text3 = global::STRINGS.BUILDINGS.PREFABS.PROPELEVATOR.DESC;
+		float num = 50f;
+		EffectorValues tier = global::TUNING.BUILDINGS.DECOR.BONUS.TIER0;
+		EffectorValues tier2 = NOISE_POLLUTION.NOISY.TIER0;
+		GameObject gameObject = EntityTemplates.CreatePlacedEntity(text, text2, text3, num, Assets.GetAnim("gravitas_elevator_kanim"), "off", Grid.SceneLayer.Building, 2, 3, tier, PermittedRotations.R90, Orientation.Neutral, tier2, SimHashes.Creature, new List<Tag> { GameTags.Gravitas }, 293f);
+		PrimaryElement component = gameObject.GetComponent<PrimaryElement>();
+		component.SetElement(SimHashes.Steel, true);
+		component.Temperature = 294.15f;
+		gameObject.AddOrGet<Demolishable>();
+		gameObject.GetComponent<OccupyArea>().objectLayers = new ObjectLayer[] { ObjectLayer.Building };
+		return gameObject;
+	}
+
+	// Token: 0x0600126F RID: 4719 RVA: 0x0006AE08 File Offset: 0x00069008
+	public void OnPrefabInit(GameObject inst)
+	{
+	}
+
+	// Token: 0x06001270 RID: 4720 RVA: 0x0006AE0C File Offset: 0x0006900C
+	public void OnSpawn(GameObject inst)
+	{
+		OccupyArea component = inst.GetComponent<OccupyArea>();
+		int num = Grid.PosToCell(inst);
+		foreach (CellOffset cellOffset in component.OccupiedCellsOffsets)
+		{
+			Grid.GravitasFacility[Grid.OffsetCell(num, cellOffset)] = true;
+		}
+	}
+}

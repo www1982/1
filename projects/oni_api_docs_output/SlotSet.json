@@ -1,0 +1,31 @@
+{
+  "className": "SlotSet",
+  "namespace": " (Namespace not specified in provided code)",
+  "baseClass": "ResourceSet<EquipmentSlot>",
+  "interfaces": [],
+  "summary": "Represents a set of EquipmentSlots.  This class likely manages a collection of equipment slots, inheriting functionality from `ResourceSet<EquipmentSlot>`.  In the context of Oxygen Not Included modding, this could be used to manage equipment slots for Duplicants, vehicles, or other entities.  The `ResourceSet` base class suggests efficient management of a potentially large number of slots, likely with features for adding, removing, and accessing individual slots.  Understanding the nature of the `EquipmentSlot` class is crucial to fully grasp the functionality of `SlotSet`.  It might represent a place where a Duplicant can equip a specific item (e.g., a tool, a suit).",
+  "keyMethods": [
+    {
+      "methodName": "Add",
+      "description": "Inherited from `ResourceSet`.  Adds a new `EquipmentSlot` to the set.  The exact behavior depends on the implementation of `ResourceSet`."
+    },
+    {
+      "methodName": "Remove",
+      "description": "Inherited from `ResourceSet`. Removes an `EquipmentSlot` from the set. The exact behavior depends on the implementation of `ResourceSet`."
+    },
+    {
+      "methodName": "Contains",
+      "description": "Inherited from `ResourceSet`. Checks if the set contains a specific `EquipmentSlot`. The exact behavior depends on the implementation of `ResourceSet`."
+    },
+    {
+      "methodName": "GetEnumerator",
+      "description": "Inherited from `ResourceSet`. Returns an enumerator that iterates through the collection of `EquipmentSlot` objects."
+    }
+  ],
+  "keyProperties": [
+    {
+      "propertyName": "Count",
+      "description": "Inherited from `ResourceSet`. Returns the number of `EquipmentSlot` objects in the set."
+    }
+  ]
+}

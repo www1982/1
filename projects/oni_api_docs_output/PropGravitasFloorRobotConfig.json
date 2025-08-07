@@ -1,0 +1,42 @@
+{
+  "className": "PropGravitasFloorRobotConfig",
+  "namespace": null,
+  "baseClass": "IEntityConfig",
+  "interfaces": [
+    "IEntityConfig"
+  ],
+  "summary": "配置一个名为\"PropGravitasFloorRobot\"的游戏内装饰性建筑。该建筑物似乎是与'Gravitas'相关的装饰性机器人，材质为花岗岩，并具有装饰性加成和噪音污染属性。此类实现了IEntityConfig接口，用于定义游戏内可放置实体的配置。",
+  "keyMethods": [
+    {
+      "methodName": "CreatePrefab",
+      "summary": "创建PropGravitasFloorRobot的预制体。它使用`EntityTemplates.CreatePlacedEntity`创建游戏对象，设置名称、描述、质量、动画、图层、尺寸、装饰度、噪音污染、主要元素（花岗岩）、标签（GameTags.Gravitas）和温度。然后，它添加了`Demolishable`组件，使其可被拆除。",
+      "parameters": [],
+      "returnType": "GameObject"
+    },
+    {
+      "methodName": "OnPrefabInit",
+      "summary": "在预制体初始化后调用。此方法设置`OccupyArea`组件的`objectLayers`属性为`ObjectLayer.Building`，指定该建筑物占用建筑物图层。",
+      "parameters": [
+        {
+          "parameterName": "inst",
+          "parameterType": "GameObject",
+          "description": "预制体的游戏对象。"
+        }
+      ],
+      "returnType": "void"
+    },
+    {
+      "methodName": "OnSpawn",
+      "summary": "在游戏对象生成后调用。此方法目前为空，意味着在该建筑物生成时不执行任何操作。",
+      "parameters": [
+        {
+          "parameterName": "inst",
+          "parameterType": "GameObject",
+          "description": "生成的游戏对象。"
+        }
+      ],
+      "returnType": "void"
+    }
+  ],
+  "keyProperties": []
+}

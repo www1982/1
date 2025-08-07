@@ -1,0 +1,196 @@
+{
+  "className": "ReportScreenEntryRow",
+  "namespace": "",
+  "baseClass": "KMonoBehaviour",
+  "interfaces": [],
+  "summary": "用于在报告屏幕上显示报表条目的一行。此类负责渲染报表条目的正负值及其对应的工具提示文本。它处理数值排序、格式化以及根据报表条目的上下文调整布局。该类与`ReportManager.ReportEntry`和`ReportManager.ReportGroup`紧密相关，用于显示游戏内资源、统计数据或其他事件的总结。  它利用Unity的UI元素（如`LocText`, `MultiToggle`, `LayoutElement`, `Image`）进行渲染和布局管理。",
+  "keyMethods": [
+    {
+      "methodName": "Sort",
+      "description": "对给定的报表条目注释列表进行排序，根据指定的顺序（升序或降序）对注释的值进行排序。",
+      "parameters": [
+        {
+          "paramName": "notes",
+          "description": "需要排序的报表条目注释列表。"
+        },
+        {
+          "paramName": "order",
+          "description": "排序顺序，ReportManager.ReportEntry.Order.Ascending为升序，ReportManager.ReportEntry.Order.Descending为降序。"
+        }
+      ],
+      "returnType": "List<ReportManager.ReportEntry.Note>"
+    },
+    {
+      "methodName": "DestroyStatics",
+      "description": "销毁静态变量`notes`，用于在场景切换或游戏结束时清理资源。",
+      "parameters": [],
+      "returnType": "void"
+    },
+    {
+      "methodName": "OnPrefabInit",
+      "description": "在预制件初始化时设置工具提示函数。为'added'、'removed'和'net'三个LocText组件设置各自的工具提示函数。",
+      "parameters": [],
+      "returnType": "void"
+    },
+    {
+      "methodName": "OnNoteTooltip",
+      "description": "生成报表条目注释的工具提示文本，支持自定义格式化函数和分组格式化函数。  此函数是其他工具提示函数的基础。",
+      "parameters": [
+        {
+          "paramName": "total_accumulation",
+          "description": "总计数值。"
+        },
+        {
+          "paramName": "tooltip_text",
+          "description": "工具提示文本的基础部分。"
+        },
+        {
+          "paramName": "order",
+          "description": "排序顺序。"
+        },
+        {
+          "paramName": "format_fn",
+          "description": "单个注释值的格式化函数。"
+        },
+        {
+          "paramName": "is_note_applicable_cb",
+          "description": "判断注释是否适用的回调函数。"
+        },
+        {
+          "paramName": "group_format_fn",
+          "description": "分组注释值的格式化函数 (可选)"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "methodName": "OnNegativeNoteTooltip",
+      "description": "生成负面注释的工具提示文本。",
+      "parameters": [],
+      "returnType": "string"
+    },
+    {
+      "methodName": "OnPositiveNoteTooltip",
+      "description": "生成正面注释的工具提示文本。",
+      "parameters": [],
+      "returnType": "string"
+    },
+    {
+      "methodName": "OnNetNoteTooltip",
+      "description": "生成净值注释的工具提示文本，根据净值正负调用不同的工具提示生成函数。",
+      "parameters": [],
+      "returnType": "string"
+    },
+    {
+      "methodName": "IsPositiveNote",
+      "description": "判断注释是否为正面注释 (值大于0)。",
+      "parameters": [
+        {
+          "paramName": "note",
+          "description": "报表条目注释。"
+        }
+      ],
+      "returnType": "bool"
+    },
+    {
+      "methodName": "IsNegativeNote",
+      "description": "判断注释是否为负面注释 (值小于0)。",
+      "parameters": [
+        {
+          "paramName": "note",
+          "description": "报表条目注释。"
+        }
+      ],
+      "returnType": "bool"
+    },
+    {
+      "methodName": "SetLine",
+      "description": "设置报表条目行的数据，更新UI显示。此函数是该类的核心函数，负责根据`ReportManager.ReportEntry`和`ReportManager.ReportGroup`数据更新UI元素文本和布局。",
+      "parameters": [
+        {
+          "paramName": "entry",
+          "description": "报表条目。"
+        },
+        {
+          "paramName": "reportGroup",
+          "description": "报表组。"
+        }
+      ],
+      "returnType": "void"
+    }
+  ],
+  "keyProperties": [
+    {
+      "propertyName": "name",
+      "description": "显示报表条目名称的`LocText`组件。"
+    },
+    {
+      "propertyName": "added",
+      "description": "显示正值（增加值）的`LocText`组件。"
+    },
+    {
+      "propertyName": "removed",
+      "description": "显示负值（减少值）的`LocText`组件。"
+    },
+    {
+      "propertyName": "net",
+      "description": "显示净值的`LocText`组件。"
+    },
+    {
+      "propertyName": "addedValue",
+      "description": "缓存的正值，用于检测是否需要更新UI。"
+    },
+    {
+      "propertyName": "removedValue",
+      "description": "缓存的负值，用于检测是否需要更新UI。"
+    },
+    {
+      "propertyName": "netValue",
+      "description": "缓存的净值，用于检测是否需要更新UI。"
+    },
+    {
+      "propertyName": "toggle",
+      "description": "用于切换显示分组信息的`MultiToggle`组件。"
+    },
+    {
+      "propertyName": "spacer",
+      "description": "用于调整布局的`LayoutElement`组件。"
+    },
+    {
+      "propertyName": "bgImage",
+      "description": "背景图片组件。"
+    },
+    {
+      "propertyName": "groupSpacerWidth",
+      "description": "分组间隔宽度。"
+    },
+    {
+      "propertyName": "contextSpacerWidth",
+      "description": "上下文间隔宽度。"
+    },
+    {
+      "propertyName": "nameWidth",
+      "description": "名称文本宽度。"
+    },
+    {
+      "propertyName": "indentWidth",
+      "description": "缩进宽度。"
+    },
+    {
+      "propertyName": "oddRowColor",
+      "description": "奇数行背景颜色。"
+    },
+    {
+      "propertyName": "notes",
+      "description": "静态的报表条目注释列表，用于排序和工具提示生成。"
+    },
+    {
+      "propertyName": "entry",
+      "description": "当前显示的报表条目。"
+    },
+    {
+      "propertyName": "reportGroup",
+      "description": "当前报表条目所属的报表组。"
+    }
+  ]
+}

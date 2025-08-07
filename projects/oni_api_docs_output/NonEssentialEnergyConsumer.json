@@ -1,0 +1,24 @@
+{
+  "className": "NonEssentialEnergyConsumer",
+  "namespace": null,
+  "baseClass": "EnergyConsumer",
+  "interfaces": [],
+  "summary": "继承自EnergyConsumer的类，表示一个非必需的能源消耗器。它重写了IsPowered属性，添加了对电源状态变化的事件处理。这在《缺氧》Mod中可能用于表示那些即使断电也不会立即造成严重后果的设备，例如装饰性灯光或某些非关键系统的组件。  当电源状态改变时，会触发PoweredStateChanged事件。",
+  "keyMethods": [],
+  "keyProperties": [
+    {
+      "name": "IsPowered",
+      "type": "bool",
+      "summary": "表示该能源消耗器是否通电。这是一个可重写的属性，在设置值时会检查变化并触发PoweredStateChanged事件。  这使得Mod开发者可以轻松地跟踪设备的电源状态，并根据状态进行相应的逻辑处理，例如改变设备的运行状态、动画或UI显示。",
+      "getter": "获取当前通电状态。",
+      "setter": "设置当前通电状态，并触发PoweredStateChanged事件。如果新状态与旧状态相同，则不执行任何操作。"
+    },
+    {
+      "name": "PoweredStateChanged",
+      "type": "Action<bool>",
+      "summary": "一个委托类型，当IsPowered属性值发生变化时触发。  此事件允许Mod开发者订阅该事件，以便在设备通电状态发生变化时执行自定义逻辑。例如，可以使用此事件来更新游戏中的UI，改变建筑物的动画，或者触发其他游戏事件。参数为bool类型，表示当前通电状态(true表示通电，false表示断电)。",
+      "getter": null,
+      "setter": null
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "className": "LeadSuitLockerConfig",
+  "namespace": null,
+  "baseClass": "IBuildingConfig",
+  "interfaces": [
+    "IBuildingConfig"
+  ],
+  "summary": "配置铅防护服储物柜的建筑定义。这是一个用于《缺氧》Mod的配置类，继承自IBuildingConfig接口，定义了铅防护服储物柜的建造、外观、功能和资源消耗等属性。该储物柜需要消耗电力，并连接气体管道来消耗氧气。该储物柜与DLC Expansion1相关联。",
+  "keyMethods": [
+    {
+      "methodName": "GetRequiredDlcIds",
+      "summary": "返回该建筑所需的DLC ID，这里是Expansion1，表明该建筑物是Expansion1 DLC的一部分。",
+      "returnType": "string[]"
+    },
+    {
+      "methodName": "CreateBuildingDef",
+      "summary": "创建并返回铅防护服储物柜的BuildingDef对象。此方法定义了建筑物的尺寸、外观、建造材料、电力消耗、噪音污染等级以及建造规则等属性。如果辐射系统未启用，则该建筑将被弃用。",
+      "returnType": "BuildingDef"
+    },
+    {
+      "methodName": "ConfigureBuildingTemplate",
+      "summary": "配置游戏对象，添加必要的组件，例如SuitLocker、ConduitConsumer、AnimTileable和Storage组件。设置储物柜的防护服标签为GameTags.LeadSuit，设置气体管道消耗速率、容量和错误处理方式。",
+      "returnType": "void"
+    },
+    {
+      "methodName": "DoPostConfigureComplete",
+      "summary": "在配置完成后执行的操作，此处调用SymbolOverrideControllerUtil.AddToPrefab，为预制体添加符号重写控制器，可能用于自定义建筑物的视觉效果。",
+      "returnType": "void"
+    }
+  ],
+  "keyProperties": [
+    {
+      "propertyName": "ID",
+      "summary": "铅防护服储物柜的唯一标识符。",
+      "propertyType": "string",
+      "isConst": true
+    }
+  ]
+}

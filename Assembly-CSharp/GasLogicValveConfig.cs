@@ -1,0 +1,66 @@
+﻿using System;
+using System.Collections.Generic;
+using STRINGS;
+using TUNING;
+using UnityEngine;
+
+// Token: 0x02000224 RID: 548
+public class GasLogicValveConfig : IBuildingConfig
+{
+	// Token: 0x06000AFE RID: 2814 RVA: 0x00041DC8 File Offset: 0x0003FFC8
+	public override BuildingDef CreateBuildingDef()
+	{
+		string text = "GasLogicValve";
+		int num = 1;
+		int num2 = 2;
+		string text2 = "valvegas_logic_kanim";
+		int num3 = 30;
+		float num4 = 10f;
+		float[] tier = global::TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER1;
+		string[] refined_METALS = MATERIALS.REFINED_METALS;
+		float num5 = 1600f;
+		BuildLocationRule buildLocationRule = BuildLocationRule.Anywhere;
+		EffectorValues tier2 = NOISE_POLLUTION.NOISY.TIER1;
+		BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(text, num, num2, text2, num3, num4, tier, refined_METALS, num5, buildLocationRule, global::TUNING.BUILDINGS.DECOR.PENALTY.TIER0, tier2, 0.2f);
+		buildingDef.InputConduitType = ConduitType.Gas;
+		buildingDef.OutputConduitType = ConduitType.Gas;
+		buildingDef.Floodable = false;
+		buildingDef.RequiresPowerInput = true;
+		buildingDef.EnergyConsumptionWhenActive = 10f;
+		buildingDef.PowerInputOffset = new CellOffset(0, 1);
+		buildingDef.ViewMode = OverlayModes.GasConduits.ID;
+		buildingDef.AudioCategory = "Metal";
+		buildingDef.PermittedRotations = PermittedRotations.R360;
+		buildingDef.UtilityInputOffset = new CellOffset(0, 0);
+		buildingDef.UtilityOutputOffset = new CellOffset(0, 1);
+		buildingDef.LogicInputPorts = new List<LogicPorts.Port> { LogicPorts.Port.InputPort(LogicOperationalController.PORT_ID, new CellOffset(0, 0), global::STRINGS.BUILDINGS.PREFABS.GASLOGICVALVE.LOGIC_PORT, global::STRINGS.BUILDINGS.PREFABS.GASLOGICVALVE.LOGIC_PORT_ACTIVE, global::STRINGS.BUILDINGS.PREFABS.GASLOGICVALVE.LOGIC_PORT_INACTIVE, true, false) };
+		GeneratedBuildings.RegisterWithOverlay(OverlayScreen.GasVentIDs, "GasLogicValve");
+		return buildingDef;
+	}
+
+	// Token: 0x06000AFF RID: 2815 RVA: 0x00041ECA File Offset: 0x000400CA
+	public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
+	{
+		global::UnityEngine.Object.DestroyImmediate(go.GetComponent<BuildingEnabledButton>());
+		BuildingConfigManager.Instance.IgnoreDefaultKComponent(typeof(RequiresFoundation), prefab_tag);
+		OperationalValve operationalValve = go.AddOrGet<OperationalValve>();
+		operationalValve.conduitType = ConduitType.Gas;
+		operationalValve.maxFlow = 1f;
+	}
+
+	// Token: 0x06000B00 RID: 2816 RVA: 0x00041F04 File Offset: 0x00040104
+	public override void DoPostConfigureComplete(GameObject go)
+	{
+		global::UnityEngine.Object.DestroyImmediate(go.GetComponent<ConduitConsumer>());
+		global::UnityEngine.Object.DestroyImmediate(go.GetComponent<ConduitDispenser>());
+		go.GetComponent<RequireInputs>().SetRequirements(true, false);
+		go.AddOrGet<LogicOperationalController>().unNetworkedValue = 0;
+		go.GetComponent<KPrefabID>().AddTag(GameTags.OverlayInFrontOfConduits, false);
+	}
+
+	// Token: 0x04000780 RID: 1920
+	public const string ID = "GasLogicValve";
+
+	// Token: 0x04000781 RID: 1921
+	private const ConduitType CONDUIT_TYPE = ConduitType.Gas;
+}

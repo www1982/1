@@ -1,0 +1,96 @@
+{
+  "className": "DataRainerChore",
+  "namespace": null,
+  "baseClass": "Chore<DataRainerChore.StatesInstance>",
+  "interfaces": [
+    "IWorkerPrioritizable"
+  ],
+  "summary": "Represents a chore for a Duplicant to perform data raining, a recreational activity involving spawning databanks. This chore uses a state machine to manage its different phases (idle, moving to a social gathering point, and raining data).  It prioritizes based on `RELAXATION.PRIORITY.TIER1` and requires the Duplicant to be available during scheduled recreation time and not during a red alert.",
+  "keyMethods": [
+    {
+      "name": "DataRainerChore(IStateMachineTarget target)",
+      "description": "Constructor. Initializes the chore with the target GameObject, sets preconditions (not red alert, scheduled recreation time, and worker prioritization check), and creates the state machine instance.",
+      "parameters": [
+        {
+          "name": "target",
+          "type": "IStateMachineTarget",
+          "description": "The GameObject that this chore is associated with (likely a DataRainer building)."
+        }
+      ]
+    },
+    {
+      "name": "GetWorkerPriority(WorkerBase worker, out int priority)",
+      "description": "Gets the priority of this chore for a given worker.  Returns the base priority (`RELAXATION.PRIORITY.TIER1`).",
+      "parameters": [
+        {
+          "name": "worker",
+          "type": "WorkerBase",
+          "description": "The worker Duplicant."
+        },
+        {
+          "name": "priority",
+          "type": "out int",
+          "description": "The output priority level."
+        }
+      ],
+      "return": {
+        "type": "bool",
+        "description": "Always returns true."
+      }
+    },
+    {
+      "name": "States.InitializeStates(out StateMachine.BaseState default_state)",
+      "description": "Initializes the states of the internal state machine. Defines transitions between idle, moving to a data rainer, and the raining animation. Spawns 'PowerStationTools' prefabs as databanks during the raining phase.  Uses animation controllers and manages the databank spawn interval.",
+      "parameters": [
+        {
+          "name": "default_state",
+          "type": "out StateMachine.BaseState",
+          "description": "The default state of the state machine."
+        }
+      ]
+    },
+    {
+      "name": "StatesInstance.IsRecTime()",
+      "description": "Checks if the current game time is within the scheduled recreation time.",
+      "return": {
+        "type": "bool",
+        "description": "True if it's recreation time, false otherwise."
+      }
+    },
+    {
+      "name": "StatesInstance.GetTargetCell()",
+      "description": "Finds the closest available SocialGatheringPoint to the Duplicant. If none is found, uses the DataRainer's cell as the target.",
+      "return": {
+        "type": "int",
+        "description": "The grid cell of the target location."
+      }
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "basePriority",
+      "type": "int",
+      "description": "The base priority level of this chore, set to `RELAXATION.PRIORITY.TIER1` (a constant representing a priority level)."
+    },
+    {
+      "name": "showAvailabilityInHoverText",
+      "type": "bool",
+      "description": "Flag indicating whether chore availability should be shown in the hover text. Set to false."
+    },
+    {
+      "name": "States.dataRainer",
+      "type": "StateMachine<DataRainerChore.States, DataRainerChore.StatesInstance, DataRainerChore, object>.TargetParameter",
+      "description": "State machine parameter representing the DataRainer GameObject."
+    },
+    {
+      "name": "States.nextBankTimer",
+      "type": "StateMachine<DataRainerChore.States, DataRainerChore.StatesInstance, DataRainerChore, object>.FloatParameter",
+      "description": "State machine parameter representing a timer for spawning databanks. Initialized with half of `DataRainer.databankSpawnInterval`."
+    },
+    {
+      "name": "StatesInstance.dataRainer",
+      "type": "GameObject",
+      "description": "Reference to the DataRainer GameObject within the state machine instance."
+    }
+  ]
+}

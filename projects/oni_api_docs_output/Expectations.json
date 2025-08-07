@@ -1,0 +1,50 @@
+{
+  "className": "Expectations",
+  "namespace": null,
+  "baseClass": null,
+  "interfaces": [],
+  "summary": "该静态类定义了小人(Duplicant)对生活质量(Quality of Life)的不同期望等级。  它使用`AttributeModifierExpectation`来表示这些期望，每个等级都对应一个数值，该数值影响小人的生活质量属性。  这些期望等级被组织成一个分层结构，用于在游戏中显示和管理。  它利用了`Db.Get().Attributes.QualityOfLifeExpectation.Id`来访问游戏内定义的生活质量属性，并使用`Assets.GetSprite`加载图标。  `ExpectationsByTier`属性包含了所有期望等级的列表，每个等级包含名称、描述和对应的属性修改器。  Mod开发者可以通过修改此类来调整小人的生活质量期望，从而影响游戏平衡和难度。",
+  "keyMethods": [
+    {
+      "name": "QOLModifier",
+      "summary": "创建一个用于修改生活质量属性的`AttributeModifier`对象。  `level`参数指定修改的数值。  该方法是内部方法，用于`QOLExpectation`方法。",
+      "parameters": [
+        {
+          "name": "level",
+          "type": "int",
+          "description": "生活质量期望等级对应的数值。"
+        }
+      ],
+      "returnType": "AttributeModifier"
+    },
+    {
+      "name": "QOLExpectation",
+      "summary": "创建一个表示生活质量期望的`AttributeModifierExpectation`对象。  `level`参数指定期望等级，`name`和`description`参数分别指定期望的名称和描述。  该方法使用`QOLModifier`方法创建对应的属性修改器，并使用一个预定义的图标。",
+      "parameters": [
+        {
+          "name": "level",
+          "type": "int",
+          "description": "生活质量期望等级对应的数值。"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "期望的名称。"
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "description": "期望的描述。"
+        }
+      ],
+      "returnType": "AttributeModifierExpectation"
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "ExpectationsByTier",
+      "summary": "一个`List<Expectation[]>`，包含了所有生活质量期望等级。  每个数组元素代表一个等级，其中包含一个`AttributeModifierExpectation`对象。  此属性是Mod开发者修改小人生活质量期望的主要入口点。  列表中的每个数组都包含一个Expectation，对应一个期望层级。",
+      "type": "List<Expectation[]>"
+    }
+  ]
+}

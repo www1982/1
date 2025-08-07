@@ -1,0 +1,102 @@
+﻿using System;
+using System.Collections.Generic;
+using TUNING;
+using UnityEngine;
+
+// Token: 0x02000416 RID: 1046
+public class SteamTurbineConfig : IBuildingConfig
+{
+	// Token: 0x0600158B RID: 5515 RVA: 0x0007A6B0 File Offset: 0x000788B0
+	public override BuildingDef CreateBuildingDef()
+	{
+		string text = "SteamTurbine";
+		int num = 5;
+		int num2 = 4;
+		string text2 = "steamturbine_kanim";
+		int num3 = 30;
+		float num4 = 60f;
+		string[] array = new string[] { "RefinedMetal", "Plastic" };
+		float[] array2 = new float[]
+		{
+			BUILDINGS.CONSTRUCTION_MASS_KG.TIER5[0],
+			BUILDINGS.CONSTRUCTION_MASS_KG.TIER3[0]
+		};
+		string[] array3 = array;
+		float num5 = 1600f;
+		BuildLocationRule buildLocationRule = BuildLocationRule.Anywhere;
+		EffectorValues none = NOISE_POLLUTION.NONE;
+		BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(text, num, num2, text2, num3, num4, array2, array3, num5, buildLocationRule, BUILDINGS.DECOR.NONE, none, 1f);
+		buildingDef.GeneratorWattageRating = 2000f;
+		buildingDef.GeneratorBaseCapacity = buildingDef.GeneratorWattageRating;
+		buildingDef.Entombable = true;
+		buildingDef.IsFoundation = false;
+		buildingDef.PermittedRotations = PermittedRotations.FlipH;
+		buildingDef.ViewMode = OverlayModes.Power.ID;
+		buildingDef.AudioCategory = "Metal";
+		buildingDef.RequiresPowerOutput = true;
+		buildingDef.PowerOutputOffset = new CellOffset(1, 0);
+		buildingDef.OverheatTemperature = 1273.15f;
+		buildingDef.LogicInputPorts = LogicOperationalController.CreateSingleInputPortList(new CellOffset(0, 0));
+		buildingDef.Deprecated = true;
+		return buildingDef;
+	}
+
+	// Token: 0x0600158C RID: 5516 RVA: 0x0007A798 File Offset: 0x00078998
+	public override void DoPostConfigureUnderConstruction(GameObject go)
+	{
+		base.DoPostConfigureUnderConstruction(go);
+		go.GetComponent<Constructable>().requiredSkillPerk = Db.Get().SkillPerks.CanPowerTinker.Id;
+	}
+
+	// Token: 0x0600158D RID: 5517 RVA: 0x0007A7C0 File Offset: 0x000789C0
+	public override void DoPostConfigureComplete(GameObject go)
+	{
+		go.AddOrGet<Storage>().SetDefaultStoredItemModifiers(SteamTurbineConfig.StoredItemModifiers);
+		Turbine turbine = go.AddOrGet<Turbine>();
+		turbine.srcElem = SimHashes.Steam;
+		MakeBaseSolid.Def def = go.AddOrGetDef<MakeBaseSolid.Def>();
+		def.solidOffsets = new CellOffset[5];
+		for (int i = 0; i < 5; i++)
+		{
+			def.solidOffsets[i] = new CellOffset(i - 2, 0);
+		}
+		turbine.pumpKGRate = 10f;
+		turbine.requiredMassFlowDifferential = 3f;
+		turbine.minEmitMass = 10f;
+		turbine.maxRPM = 4000f;
+		turbine.rpmAcceleration = turbine.maxRPM / 30f;
+		turbine.rpmDeceleration = turbine.maxRPM / 20f;
+		turbine.minGenerationRPM = 3000f;
+		turbine.minActiveTemperature = 500f;
+		turbine.emitTemperature = 425f;
+		go.AddOrGet<Generator>();
+		go.AddOrGet<LogicOperationalController>();
+		Prioritizable.AddRef(go);
+		go.GetComponent<KPrefabID>().prefabSpawnFn += delegate(GameObject game_object)
+		{
+			HandleVector<int>.Handle handle = GameComps.StructureTemperatures.GetHandle(game_object);
+			StructureTemperaturePayload payload = GameComps.StructureTemperatures.GetPayload(handle);
+			Extents extents = game_object.GetComponent<Building>().GetExtents();
+			Extents extents2 = new Extents(extents.x, extents.y - 1, extents.width, extents.height + 1);
+			payload.OverrideExtents(extents2);
+			GameComps.StructureTemperatures.SetPayload(handle, ref payload);
+		};
+	}
+
+	// Token: 0x04000CC4 RID: 3268
+	public const string ID = "SteamTurbine";
+
+	// Token: 0x04000CC5 RID: 3269
+	private const int HEIGHT = 4;
+
+	// Token: 0x04000CC6 RID: 3270
+	private const int WIDTH = 5;
+
+	// Token: 0x04000CC7 RID: 3271
+	private static readonly List<Storage.StoredItemModifier> StoredItemModifiers = new List<Storage.StoredItemModifier>
+	{
+		Storage.StoredItemModifier.Hide,
+		Storage.StoredItemModifier.Insulate,
+		Storage.StoredItemModifier.Seal
+	};
+}

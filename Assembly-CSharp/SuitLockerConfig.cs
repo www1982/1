@@ -1,0 +1,63 @@
+﻿using System;
+using STRINGS;
+using TUNING;
+using UnityEngine;
+
+// Token: 0x0200041F RID: 1055
+public class SuitLockerConfig : IBuildingConfig
+{
+	// Token: 0x060015BB RID: 5563 RVA: 0x0007BDE4 File Offset: 0x00079FE4
+	public override BuildingDef CreateBuildingDef()
+	{
+		string text = "SuitLocker";
+		int num = 1;
+		int num2 = 3;
+		string text2 = "changingarea_kanim";
+		int num3 = 30;
+		float num4 = 30f;
+		string[] refined_METALS = MATERIALS.REFINED_METALS;
+		float[] tier = global::TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER2;
+		string[] array = refined_METALS;
+		float num5 = 1600f;
+		BuildLocationRule buildLocationRule = BuildLocationRule.OnFloor;
+		EffectorValues none = NOISE_POLLUTION.NONE;
+		BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(text, num, num2, text2, num3, num4, tier, array, num5, buildLocationRule, global::TUNING.BUILDINGS.DECOR.BONUS.TIER1, none, 0.2f);
+		buildingDef.RequiresPowerInput = true;
+		buildingDef.EnergyConsumptionWhenActive = 120f;
+		buildingDef.PreventIdleTraversalPastBuilding = true;
+		buildingDef.InputConduitType = ConduitType.Gas;
+		buildingDef.UtilityInputOffset = new CellOffset(0, 0);
+		GeneratedBuildings.RegisterWithOverlay(OverlayScreen.SuitIDs, "SuitLocker");
+		buildingDef.AddSearchTerms(SEARCH_TERMS.ATMOSUIT);
+		return buildingDef;
+	}
+
+	// Token: 0x060015BC RID: 5564 RVA: 0x0007BE78 File Offset: 0x0007A078
+	public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
+	{
+		go.AddOrGet<SuitLocker>().OutfitTags = new Tag[] { GameTags.AtmoSuit };
+		ConduitConsumer conduitConsumer = go.AddOrGet<ConduitConsumer>();
+		conduitConsumer.conduitType = ConduitType.Gas;
+		conduitConsumer.consumptionRate = 1f;
+		conduitConsumer.capacityTag = ElementLoader.FindElementByHash(SimHashes.Oxygen).tag;
+		conduitConsumer.wrongElementResult = ConduitConsumer.WrongElementResult.Dump;
+		conduitConsumer.forceAlwaysSatisfied = true;
+		conduitConsumer.capacityKG = 200f;
+		go.AddOrGet<AnimTileable>().tags = new Tag[]
+		{
+			new Tag("SuitLocker"),
+			new Tag("SuitMarker")
+		};
+		go.AddOrGet<Storage>();
+		Prioritizable.AddRef(go);
+	}
+
+	// Token: 0x060015BD RID: 5565 RVA: 0x0007BF27 File Offset: 0x0007A127
+	public override void DoPostConfigureComplete(GameObject go)
+	{
+		SymbolOverrideControllerUtil.AddToPrefab(go);
+	}
+
+	// Token: 0x04000CDE RID: 3294
+	public const string ID = "SuitLocker";
+}

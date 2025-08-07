@@ -1,0 +1,40 @@
+{
+  "className": "NotificationHighlightTarget",
+  "namespace": null,
+  "baseClass": "KMonoBehaviour",
+  "interfaces": [],
+  "summary": "此类代表一个可以被 `NotificationHighlightController` 高亮的UI元素目标。它在启用时向控制器注册自身，禁用时注销自身，并提供一个 `View()` 方法通知控制器该目标已被查看。这通常用于《缺氧》游戏中需要引起玩家注意的UI元素，例如需要小人处理的紧急事件或任务。  该组件依赖于`NotificationHighlightController`来管理高亮显示。",
+  "keyMethods": [
+    {
+      "name": "OnEnable",
+      "description": "在MonoBehaviour启用时调用。此方法将自身注册到其父对象中的 `NotificationHighlightController`。如果找不到控制器，则不执行任何操作。",
+      "parameters": [],
+      "return": "void"
+    },
+    {
+      "name": "OnDisable",
+      "description": "在MonoBehaviour禁用时调用。此方法从其父对象中的 `NotificationHighlightController` 注销自身。如果控制器不存在，则不执行任何操作。",
+      "parameters": [],
+      "return": "void"
+    },
+    {
+      "name": "View",
+      "description": "通知 `NotificationHighlightController` 该目标已被查看。这可能用于清除高亮显示或执行其他与查看目标相关的操作。",
+      "parameters": [],
+      "return": "void"
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "targetKey",
+      "description": "用于标识此目标的唯一键。此键很可能用于 `NotificationHighlightController` 内部进行目标管理。",
+      "type": "string"
+    },
+    {
+      "name": "controller",
+      "description": "对父对象中 `NotificationHighlightController` 的引用。该属性用于在 `OnEnable` 和 `OnDisable` 方法中注册和注销自身。",
+      "type": "NotificationHighlightController",
+      "accessModifier": "private"
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "className": "FXHelpers",
+  "namespace": "",
+  "baseClass": null,
+  "interfaces": [],
+  "summary": "用于在《缺氧》游戏中创建视觉特效的静态帮助类。它提供三种方法来创建基于动画文件的特效，并允许自定义特效的位置、父对象、声音以及图层。  `EffectTemplateId` 和 `EffectTemplateOverrideId`  预设体分别用于创建标准特效和覆盖特效。该类利用 `KBatchedAnimController` 来管理动画，并处理动画文件缺失的情况。",
+  "keyMethods": [
+    {
+      "methodName": "CreateEffect",
+      "parameters": [
+        {
+          "name": "anim_file_name",
+          "type": "string",
+          "description": "特效动画文件的名称。"
+        },
+        {
+          "name": "position",
+          "type": "Vector3",
+          "description": "特效在世界坐标系中的位置。"
+        },
+        {
+          "name": "parent",
+          "type": "Transform",
+          "description": "特效的父对象变换组件，默认为null。"
+        },
+        {
+          "name": "update_looping_sounds_position",
+          "type": "bool",
+          "description": "是否更新循环播放声音的位置，默认为false。"
+        },
+        {
+          "name": "layer",
+          "type": "Grid.SceneLayer",
+          "description": "特效所在的图层，默认为Grid.SceneLayer.Front。"
+        },
+        {
+          "name": "set_inactive",
+          "type": "bool",
+          "description": "创建后是否将特效设置为非活动状态，默认为false。"
+        }
+      ],
+      "returnType": "KBatchedAnimController",
+      "description": "创建一个基于单个动画文件的视觉特效。"
+    },
+    {
+      "methodName": "CreateEffect",
+      "parameters": [
+        {
+          "name": "anim_file_names",
+          "type": "string[]",
+          "description": "特效动画文件的名称数组。使用第一个元素作为PrefabTag。"
+        },
+        {
+          "name": "position",
+          "type": "Vector3",
+          "description": "特效在世界坐标系中的位置。"
+        },
+        {
+          "name": "parent",
+          "type": "Transform",
+          "description": "特效的父对象变换组件，默认为null。"
+        },
+        {
+          "name": "update_looping_sounds_position",
+          "type": "bool",
+          "description": "是否更新循环播放声音的位置，默认为false。"
+        },
+        {
+          "name": "layer",
+          "type": "Grid.SceneLayer",
+          "description": "特效所在的图层，默认为Grid.SceneLayer.Front。"
+        },
+        {
+          "name": "set_inactive",
+          "type": "bool",
+          "description": "创建后是否将特效设置为非活动状态，默认为false。"
+        }
+      ],
+      "returnType": "KBatchedAnimController",
+      "description": "创建一个基于多个动画文件的视觉特效。  处理多个动画文件的加载，并输出警告信息提示丢失的动画文件。"
+    },
+    {
+      "methodName": "CreateEffectOverride",
+      "parameters": [
+        {
+          "name": "anim_file_names",
+          "type": "string[]",
+          "description": "特效动画文件的名称数组。使用第一个元素作为PrefabTag。"
+        },
+        {
+          "name": "position",
+          "type": "Vector3",
+          "description": "特效在世界坐标系中的位置。"
+        },
+        {
+          "name": "parent",
+          "type": "Transform",
+          "description": "特效的父对象变换组件，默认为null。"
+        },
+        {
+          "name": "update_looping_sounds_position",
+          "type": "bool",
+          "description": "是否更新循环播放声音的位置，默认为false。"
+        },
+        {
+          "name": "layer",
+          "type": "Grid.SceneLayer",
+          "description": "特效所在的图层，默认为Grid.SceneLayer.Front。"
+        },
+        {
+          "name": "set_inactive",
+          "type": "bool",
+          "description": "创建后是否将特效设置为非活动状态，默认为false。"
+        }
+      ],
+      "returnType": "KBatchedAnimController",
+      "description": "创建一个基于多个动画文件的覆盖特效，与 `CreateEffect(string[])`  类似，但使用不同的预设体 `EffectTemplateOverrideId`。"
+    }
+  ],
+  "keyProperties": []
+}

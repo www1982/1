@@ -1,0 +1,83 @@
+{
+  "className": "SteamEngineConfig",
+  "namespace": null,
+  "baseClass": "IBuildingConfig",
+  "interfaces": [
+    "IBuildingConfig"
+  ],
+  "summary": "配置蒸汽发动机的建筑定义。这是一个用于《缺氧》Mod的配置类，继承自IBuildingConfig接口，定义了蒸汽引擎的各项属性，包括建造、外观、功能以及与其他游戏系统（如火箭系统、管道系统）的交互。该蒸汽引擎使用蒸汽作为燃料，并会产生蒸汽作为废气。",
+  "keyMethods": [
+    {
+      "methodName": "GetForbiddenDlcIds",
+      "summary": "返回此建筑在哪些DLC中被禁用。此方法返回DlcManager.EXPANSION1，表示该建筑在Expansion1 DLC中不可用。",
+      "parameters": [],
+      "returnType": "string[]"
+    },
+    {
+      "methodName": "CreateBuildingDef",
+      "summary": "创建蒸汽引擎的BuildingDef。此方法定义了蒸汽引擎的各种属性，包括尺寸、外观、建造材料、噪音污染等级、过热温度、是否可被淹没、连接点、所属图层等。它使用了BuildingTemplates.CreateBuildingDef和BuildingTemplates.CreateRocketBuildingDef创建火箭模块的建筑定义。",
+      "parameters": [],
+      "returnType": "BuildingDef"
+    },
+    {
+      "methodName": "ConfigureBuildingTemplate",
+      "summary": "配置游戏对象模板。此方法在游戏对象创建后进行配置，添加了循环声音、工业机械标签以及火箭连接点。它还忽略了地基的需求。",
+      "parameters": [
+        {
+          "parameterName": "go",
+          "parameterType": "GameObject"
+        },
+        {
+          "parameterName": "prefab_tag",
+          "parameterType": "Tag"
+        }
+      ],
+      "returnType": "void"
+    },
+    {
+      "methodName": "DoPostConfigurePreview",
+      "summary": "在预览阶段之后进行的配置，此方法为空，表示在预览阶段无需额外配置。",
+      "parameters": [
+        {
+          "parameterName": "def",
+          "parameterType": "BuildingDef"
+        },
+        {
+          "parameterName": "go",
+          "parameterType": "GameObject"
+        }
+      ],
+      "returnType": "void"
+    },
+    {
+      "methodName": "DoPostConfigureUnderConstruction",
+      "summary": "在建筑物建造过程中进行的配置，此方法为空，表示在建造过程中无需额外配置。",
+      "parameters": [
+        {
+          "parameterName": "go",
+          "parameterType": "GameObject"
+        }
+      ],
+      "returnType": "void"
+    },
+    {
+      "methodName": "DoPostConfigureComplete",
+      "summary": "在建筑物完全建造完成后进行的配置。此方法添加了RocketEngine组件，配置了燃料类型、效率、爆炸效果、废气类型和温度；添加了Storage组件，配置了容量和物品修饰符；添加了FuelTank组件，配置了燃料消耗、储存和燃料类型；添加了CopyBuildingSettings组件，用于复制建筑设置；添加了ConduitConsumer组件，配置了管道类型、消耗速率、容量和错误处理。最后，它扩展了建筑到火箭模块。",
+      "parameters": [
+        {
+          "parameterName": "go",
+          "parameterType": "GameObject"
+        }
+      ],
+      "returnType": "void"
+    }
+  ],
+  "keyProperties": [
+    {
+      "propertyName": "ID",
+      "summary": "蒸汽引擎的唯一标识符。",
+      "type": "string",
+      "isConst": true
+    }
+  ]
+}

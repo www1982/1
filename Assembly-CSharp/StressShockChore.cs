@@ -1,0 +1,515 @@
+﻿using System;
+using System.Collections.Generic;
+using STRINGS;
+using TUNING;
+using UnityEngine;
+
+// Token: 0x0200049F RID: 1183
+public class StressShockChore : Chore<StressShockChore.StatesInstance>
+{
+	// Token: 0x060018B0 RID: 6320 RVA: 0x00089FC4 File Offset: 0x000881C4
+	private static bool CheckBlocked(int sourceCell, int destinationCell)
+	{
+		HashSet<int> hashSet = new HashSet<int>();
+		Grid.CollectCellsInLine(sourceCell, destinationCell, hashSet);
+		bool flag = false;
+		foreach (int num in hashSet)
+		{
+			if (Grid.Solid[num])
+			{
+				flag = true;
+				break;
+			}
+		}
+		return flag;
+	}
+
+	// Token: 0x060018B1 RID: 6321 RVA: 0x0008A030 File Offset: 0x00088230
+	public static void AddBatteryDrainModifier(StressShockChore.StatesInstance smi)
+	{
+		smi.SetDrainModifierActiveState(true);
+	}
+
+	// Token: 0x060018B2 RID: 6322 RVA: 0x0008A039 File Offset: 0x00088239
+	public static void RemoveBatteryDrainModifier(StressShockChore.StatesInstance smi)
+	{
+		smi.SetDrainModifierActiveState(false);
+	}
+
+	// Token: 0x060018B3 RID: 6323 RVA: 0x0008A044 File Offset: 0x00088244
+	public static void ForceStressMonitorToTimeOut(StressShockChore.StatesInstance smi)
+	{
+		StressBehaviourMonitor.Instance smi2 = smi.GetSMI<StressBehaviourMonitor.Instance>();
+		if (smi2 != null)
+		{
+			smi2.ManualSetStressTier2TimeCounter(150f);
+		}
+	}
+
+	// Token: 0x060018B4 RID: 6324 RVA: 0x0008A068 File Offset: 0x00088268
+	public StressShockChore(ChoreType chore_type, IStateMachineTarget target, Notification notification, Action<Chore> on_complete = null)
+		: base(Db.Get().ChoreTypes.StressShock, target, target.GetComponent<ChoreProvider>(), false, on_complete, null, null, PriorityScreen.PriorityClass.compulsory, 5, false, true, 0, false, ReportManager.ReportType.WorkTime)
+	{
+		base.smi = new StressShockChore.StatesInstance(this, target.gameObject, notification);
+	}
+
+	// Token: 0x04000E49 RID: 3657
+	public const float FaceBeamZOffset = 0.01f;
+
+	// Token: 0x020012C9 RID: 4809
+	public class StatesInstance : GameStateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.GameInstance
+	{
+		// Token: 0x060087C3 RID: 34755 RVA: 0x003460DC File Offset: 0x003442DC
+		public StatesInstance(StressShockChore master, GameObject shocker, Notification notification)
+			: base(master)
+		{
+			base.sm.shocker.Set(shocker, base.smi, false);
+			this.notification = notification;
+		}
+
+		// Token: 0x060087C4 RID: 34756 RVA: 0x00346154 File Offset: 0x00344354
+		public void SetDrainModifierActiveState(bool draining)
+		{
+			if (draining)
+			{
+				this.batteryMonitor.AddOrUpdateModifier(this.powerDrainModifier, true);
+				return;
+			}
+			this.batteryMonitor.RemoveModifier(this.powerDrainModifier.id, true);
+		}
+
+		// Token: 0x060087C5 RID: 34757 RVA: 0x00346188 File Offset: 0x00344388
+		public void FindDestination()
+		{
+			int num = this.FindIdleCell();
+			if (num != -1 && num != Grid.PosToCell(base.gameObject))
+			{
+				base.sm.targetMoveLocation.Set(num, base.smi, false);
+				this.GoTo(base.sm.shocking.runAroundShockingStuff);
+				return;
+			}
+			num = this.FindMinionTarget();
+			if (num != -1 && num != Grid.PosToCell(base.gameObject))
+			{
+				base.sm.targetMoveLocation.Set(num, base.smi, false);
+				this.GoTo(base.sm.shocking.runAroundShockingStuff);
+				return;
+			}
+			base.sm.targetMoveLocation.Set(Grid.PosToCell(base.gameObject), base.smi, false);
+			this.GoTo(base.sm.shocking.standStillShockingStuff);
+		}
+
+		// Token: 0x060087C6 RID: 34758 RVA: 0x00346260 File Offset: 0x00344460
+		private int FindMinionTarget()
+		{
+			Navigator component = base.smi.gameObject.GetComponent<Navigator>();
+			if (component == null)
+			{
+				return Grid.InvalidCell;
+			}
+			int num = int.MaxValue;
+			int num2 = Grid.InvalidCell;
+			List<MinionIdentity> worldItems = Components.LiveMinionIdentities.GetWorldItems(base.smi.gameObject.GetMyWorldId(), false);
+			for (int i = 0; i < worldItems.Count; i++)
+			{
+				if (!worldItems[i].IsNullOrDestroyed() && !(worldItems[i].gameObject == base.gameObject))
+				{
+					int num3 = Grid.PosToCell(worldItems[i]);
+					if (component.CanReach(num3))
+					{
+						int navigationCost = component.GetNavigationCost(num3);
+						if (navigationCost < num)
+						{
+							num = navigationCost;
+							num2 = num3;
+						}
+					}
+				}
+			}
+			return num2;
+		}
+
+		// Token: 0x060087C7 RID: 34759 RVA: 0x00346324 File Offset: 0x00344524
+		private int FindIdleCell()
+		{
+			Navigator component = base.smi.master.GetComponent<Navigator>();
+			MinionPathFinderAbilities minionPathFinderAbilities = (MinionPathFinderAbilities)component.GetCurrentAbilities();
+			minionPathFinderAbilities.SetIdleNavMaskEnabled(true);
+			IdleCellQuery idleCellQuery = PathFinderQueries.idleCellQuery.Reset(base.GetComponent<MinionBrain>(), global::UnityEngine.Random.Range(90, 180));
+			component.RunQuery(idleCellQuery);
+			if (idleCellQuery.GetResultCell() == Grid.PosToCell(base.gameObject))
+			{
+				idleCellQuery = PathFinderQueries.idleCellQuery.Reset(base.GetComponent<MinionBrain>(), global::UnityEngine.Random.Range(0, 90));
+				component.RunQuery(idleCellQuery);
+			}
+			minionPathFinderAbilities.SetIdleNavMaskEnabled(false);
+			return idleCellQuery.GetResultCell();
+		}
+
+		// Token: 0x060087C8 RID: 34760 RVA: 0x003463BC File Offset: 0x003445BC
+		public void ShockUpdateRender(StressShockChore.StatesInstance smi, float dt)
+		{
+			if (smi.sm.faceLightningFX.Get(smi) != null)
+			{
+				smi.sm.faceLightningFX.Get(smi).transform.SetPosition(smi.FaceOriginLocation());
+			}
+			if (smi.sm.beamTarget.Get(smi) != null)
+			{
+				Vector3 vector = smi.sm.beamTarget.Get(smi).transform.position + Vector3.up / 2f;
+				if (smi.sm.beamFX.Get(smi) == null)
+				{
+					smi.MakeBeam();
+				}
+				if (!StressShockChore.CheckBlocked(Grid.PosToCell(smi.sm.beamFX.Get(smi).transform.position), Grid.PosToCell(vector)))
+				{
+					smi.AimBeam(vector, 0);
+				}
+			}
+		}
+
+		// Token: 0x060087C9 RID: 34761 RVA: 0x003464A4 File Offset: 0x003446A4
+		public void ShockUpdate200(StressShockChore.StatesInstance smi, float dt)
+		{
+			float num = dt * STRESS.SHOCKER.POWER_CONSUMPTION_RATE;
+			smi.sm.powerConsumed.Delta(num, smi);
+			smi.batteryMonitor.ConsumePower(num);
+			if (smi.sm.beamTarget.Get(smi) != null)
+			{
+				Health component = smi.sm.beamTarget.Get(smi).GetComponent<Health>();
+				if (component != null)
+				{
+					component.Damage(dt * STRESS.SHOCKER.DAMAGE_RATE);
+					return;
+				}
+				Electrobank component2 = smi.sm.beamTarget.Get(smi).GetComponent<Electrobank>();
+				if (component2 != null)
+				{
+					component2.Damage(dt * STRESS.SHOCKER.DAMAGE_RATE);
+					return;
+				}
+				if (smi.sm.beamTarget.Get(smi).HasTag(GameTags.Wires))
+				{
+					BuildingHP component3 = smi.sm.beamTarget.Get(smi).GetComponent<BuildingHP>();
+					if (component3 != null)
+					{
+						component3.DoDamage(Mathf.RoundToInt(dt * STRESS.SHOCKER.DAMAGE_RATE));
+					}
+				}
+			}
+		}
+
+		// Token: 0x060087CA RID: 34762 RVA: 0x003465A0 File Offset: 0x003447A0
+		public void PickShockTarget(StressShockChore.StatesInstance smi)
+		{
+			int num = Grid.PosToCell(smi.master.gameObject);
+			int num2 = (int)Grid.WorldIdx[num];
+			List<GameObject> list = new List<GameObject>();
+			float num3 = global::UnityEngine.Random.Range(0f, 2f);
+			foreach (Health health in Components.Health.GetWorldItems(num2, false))
+			{
+				if (!health.IsNullOrDestroyed() && !(health.gameObject == smi.master.gameObject))
+				{
+					int num4 = Grid.PosToCell(health);
+					float num5 = Vector2.Distance(Grid.CellToPos2D(num), Grid.CellToPos2D(num4));
+					if (num5 <= (float)STRESS.SHOCKER.SHOCK_RADIUS && num5 > num3 && !StressShockChore.CheckBlocked(num, num4))
+					{
+						list.Add(health.gameObject);
+					}
+				}
+			}
+			if (list.Count == 0)
+			{
+				Vector2I vector2I = Grid.CellToXY(num);
+				List<ScenePartitionerEntry> list2 = new List<ScenePartitionerEntry>();
+				GameScenePartitioner.Instance.GatherEntries(vector2I.x - STRESS.SHOCKER.SHOCK_RADIUS, vector2I.y - STRESS.SHOCKER.SHOCK_RADIUS, STRESS.SHOCKER.SHOCK_RADIUS * 2, STRESS.SHOCKER.SHOCK_RADIUS * 2, GameScenePartitioner.Instance.completeBuildings, list2);
+				foreach (ScenePartitionerEntry scenePartitionerEntry in list2)
+				{
+					if (!StressShockChore.CheckBlocked(num, Grid.PosToCell(new Vector2((float)scenePartitionerEntry.x, (float)scenePartitionerEntry.y))))
+					{
+						BuildingComplete buildingComplete = scenePartitionerEntry.obj as BuildingComplete;
+						if (buildingComplete != null)
+						{
+							list.Add(buildingComplete.gameObject);
+						}
+					}
+				}
+			}
+			if (list.Count == 0)
+			{
+				this.ClearBeam(false);
+				return;
+			}
+			GameObject random = list.GetRandom<GameObject>();
+			GameObject gameObject = random;
+			float num6 = float.MaxValue;
+			foreach (GameObject gameObject2 in list)
+			{
+				if (list.Count <= 1 || !(gameObject2 == base.sm.previousTarget.Get(smi)))
+				{
+					float num7 = Vector2.Distance(base.transform.position, gameObject2.transform.position);
+					if (num7 < num6)
+					{
+						num6 = num7;
+						gameObject = gameObject2;
+					}
+				}
+			}
+			if (random != null && gameObject != null && global::UnityEngine.Random.Range(0, 100) > 50)
+			{
+				base.sm.beamTarget.Set(gameObject, smi, false);
+				return;
+			}
+			base.sm.beamTarget.Set(gameObject, smi, false);
+		}
+
+		// Token: 0x060087CB RID: 34763 RVA: 0x0034686C File Offset: 0x00344A6C
+		public void MakeBeam()
+		{
+			GameObject gameObject = new GameObject("shockFX");
+			gameObject.SetActive(false);
+			KBatchedAnimController kbatchedAnimController = gameObject.AddComponent<KBatchedAnimController>();
+			base.sm.beamFX.Set(kbatchedAnimController, base.smi, false);
+			kbatchedAnimController.SwapAnims(new KAnimFile[] { Assets.GetAnim("bionic_dupe_stress_beam_fx_kanim") });
+			gameObject.SetActive(true);
+			bool flag;
+			Vector3 vector = base.GetComponent<KBatchedAnimController>().GetSymbolTransform("snapTo_hat", out flag).GetColumn(3);
+			vector -= Vector3.up / 4f;
+			vector.z = base.transform.position.z + 0.01f;
+			gameObject.transform.position = vector;
+			kbatchedAnimController.Play("beam1", KAnim.PlayMode.Loop, 1f, 0f);
+			if (base.sm.faceLightningFX.Get(base.smi) != null)
+			{
+				Util.KDestroyGameObject(base.sm.faceLightningFX.Get(base.smi).gameObject);
+				base.sm.faceLightningFX.Set(null, base.smi, false);
+			}
+			GameObject gameObject2 = new GameObject("faceLightningFX");
+			gameObject2.SetActive(false);
+			KBatchedAnimController kbatchedAnimController2 = gameObject2.AddComponent<KBatchedAnimController>();
+			base.sm.faceLightningFX.Set(kbatchedAnimController2, base.smi, false);
+			kbatchedAnimController2.SwapAnims(new KAnimFile[] { Assets.GetAnim("bionic_dupe_stress_lightning_fx_kanim") });
+			gameObject2.SetActive(true);
+			gameObject2.transform.position = this.FaceOriginLocation();
+			kbatchedAnimController2.Play("lightning", KAnim.PlayMode.Loop, 1f, 0f);
+			GameObject gameObject3 = new GameObject("impactFX");
+			gameObject3.SetActive(false);
+			KBatchedAnimController kbatchedAnimController3 = gameObject3.AddComponent<KBatchedAnimController>();
+			base.sm.impactFX.Set(kbatchedAnimController3, base.smi, false);
+			kbatchedAnimController3.SwapAnims(new KAnimFile[] { Assets.GetAnim("bionic_dupe_stress_beam_impact_fx_kanim") });
+			gameObject3.SetActive(true);
+			kbatchedAnimController3.Play("stress_beam_impact_fx", KAnim.PlayMode.Loop, 1f, 0f);
+		}
+
+		// Token: 0x060087CC RID: 34764 RVA: 0x00346AB4 File Offset: 0x00344CB4
+		public Vector3 FaceOriginLocation()
+		{
+			bool flag;
+			Vector3 vector = base.GetComponent<KBatchedAnimController>().GetSymbolTransform("snapTo_hat", out flag).GetColumn(3);
+			vector -= Vector3.up / 4f;
+			vector.z = Grid.GetLayerZ(Grid.SceneLayer.FXFront);
+			return vector;
+		}
+
+		// Token: 0x060087CD RID: 34765 RVA: 0x00346B0C File Offset: 0x00344D0C
+		public void ClearBeam(bool clearFaceFX = true)
+		{
+			base.sm.previousTarget.Set(base.sm.beamTarget.Get(base.smi), base.smi, false);
+			base.sm.beamTarget.Set(null, base.smi, false);
+			if (base.sm.beamFX.Get(base.smi) != null)
+			{
+				Util.KDestroyGameObject(base.sm.beamFX.Get(base.smi).gameObject);
+				base.sm.beamFX.Set(null, base.smi, false);
+			}
+			if (base.sm.impactFX.Get(base.smi) != null)
+			{
+				Util.KDestroyGameObject(base.sm.impactFX.Get(base.smi).gameObject);
+				base.sm.impactFX.Set(null, base.smi, false);
+			}
+			if (clearFaceFX && base.sm.faceLightningFX.Get(base.smi) != null)
+			{
+				Util.KDestroyGameObject(base.sm.faceLightningFX.Get(base.smi).gameObject);
+				base.sm.faceLightningFX.Set(null, base.smi, false);
+			}
+		}
+
+		// Token: 0x060087CE RID: 34766 RVA: 0x00346C68 File Offset: 0x00344E68
+		public void AimBeam(Vector3 targetPosition, int beamIdx)
+		{
+			Vector3 vector = this.FaceOriginLocation();
+			vector.z = base.transform.position.z + 0.01f;
+			base.smi.sm.beamFX.Get(base.smi).transform.SetPosition(vector);
+			Vector3 vector2 = Vector3.Normalize(targetPosition - base.smi.sm.beamFX.Get(base.smi).transform.position);
+			float num = MathUtil.AngleSigned(Vector3.up, vector2, Vector3.forward) + 90f;
+			base.smi.sm.beamFX.Get(base.smi).Rotation = num;
+			base.smi.sm.impactFX.Get(base.smi).transform.position = targetPosition;
+			base.smi.sm.faceLightningFX.Get(base.smi).FlipX = targetPosition.x < base.smi.sm.faceLightningFX.Get(base.smi).transform.position.x;
+			Vector3 position = base.smi.sm.beamFX.Get(base.smi).transform.position;
+			position.z = 0f;
+			Vector3 vector3 = targetPosition;
+			vector3.z = 0f;
+			float num2 = Vector3.Distance(position, vector3);
+			if (num2 > 3f)
+			{
+				if (base.smi.sm.beamFX.Get(base.smi).CurrentAnim == null || base.smi.sm.beamFX.Get(base.smi).CurrentAnim.name != "beam3")
+				{
+					base.smi.sm.beamFX.Get(base.smi).Play("beam3", KAnim.PlayMode.Loop, 1f, 0f);
+				}
+				base.smi.sm.beamFX.Get(base.smi).animWidth = num2 / 3f;
+				return;
+			}
+			if (num2 > 2f)
+			{
+				if (base.smi.sm.beamFX.Get(base.smi).CurrentAnim == null || base.smi.sm.beamFX.Get(base.smi).CurrentAnim.name != "beam2")
+				{
+					base.smi.sm.beamFX.Get(base.smi).Play("beam2", KAnim.PlayMode.Loop, 1f, 0f);
+				}
+				base.smi.sm.beamFX.Get(base.smi).animWidth = num2 / 2f;
+				return;
+			}
+			if (base.smi.sm.beamFX.Get(base.smi).CurrentAnim == null || base.smi.sm.beamFX.Get(base.smi).CurrentAnim.name != "beam1")
+			{
+				base.smi.sm.beamFX.Get(base.smi).Play("beam1", KAnim.PlayMode.Loop, 1f, 0f);
+			}
+			base.smi.sm.beamFX.Get(base.smi).animWidth = num2;
+		}
+
+		// Token: 0x060087CF RID: 34767 RVA: 0x00347010 File Offset: 0x00345210
+		public void ShowBeam(bool show)
+		{
+			if (base.smi.sm.impactFX.Get(base.smi) != null)
+			{
+				base.smi.sm.impactFX.Get(base.smi).enabled = show;
+			}
+			if (base.smi.sm.beamFX.Get(base.smi) != null)
+			{
+				base.smi.sm.beamFX.Get(base.smi).enabled = show;
+			}
+		}
+
+		// Token: 0x04006778 RID: 26488
+		public Notification notification;
+
+		// Token: 0x04006779 RID: 26489
+		[MySmiReq]
+		public BionicBatteryMonitor.Instance batteryMonitor;
+
+		// Token: 0x0400677A RID: 26490
+		public BionicBatteryMonitor.WattageModifier powerDrainModifier = new BionicBatteryMonitor.WattageModifier("StressShockChore", string.Format(DUPLICANTS.MODIFIERS.BIONIC_WATTS.TOOLTIP.STANDARD_ACTIVE_TEMPLATE, DUPLICANTS.TRAITS.STRESSSHOCKER.DRAIN_ATTRIBUTE, "<b>+</b>" + GameUtil.GetFormattedWattage(STRESS.SHOCKER.POWER_CONSUMPTION_RATE, GameUtil.WattageFormatterUnit.Automatic, true)), STRESS.SHOCKER.POWER_CONSUMPTION_RATE, STRESS.SHOCKER.POWER_CONSUMPTION_RATE);
+	}
+
+	// Token: 0x020012CA RID: 4810
+	public class States : GameStateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore>
+	{
+		// Token: 0x060087D0 RID: 34768 RVA: 0x003470A8 File Offset: 0x003452A8
+		public override void InitializeStates(out StateMachine.BaseState default_state)
+		{
+			default_state = this.shocking.findDestination;
+			base.serializable = StateMachine.SerializeType.Never;
+			base.Target(this.shocker);
+			this.shocking.EventTransition(GameHashes.BionicOffline, this.offline, null).DefaultState(this.shocking.findDestination).ToggleAnims("anim_loco_stressshocker_kanim", 0f)
+				.ParamTransition<float>(this.powerConsumed, this.complete, (StressShockChore.StatesInstance smi, float p) => p >= STRESS.SHOCKER.MAX_POWER_USE)
+				.Enter(delegate(StressShockChore.StatesInstance smi)
+				{
+					smi.MakeBeam();
+				})
+				.Exit(delegate(StressShockChore.StatesInstance smi)
+				{
+					smi.ClearBeam(true);
+				});
+			this.shocking.findDestination.Enter("FindDestination", delegate(StressShockChore.StatesInstance smi)
+			{
+				smi.ShowBeam(false);
+				smi.FindDestination();
+			}).Update(delegate(StressShockChore.StatesInstance smi, float dt)
+			{
+				float num = dt * STRESS.SHOCKER.FAKE_POWER_CONSUMPTION_RATE;
+				smi.sm.powerConsumed.Delta(num, smi);
+				smi.FindDestination();
+			}, UpdateRate.SIM_1000ms, false);
+			this.shocking.runAroundShockingStuff.MoveTo((StressShockChore.StatesInstance smi) => smi.sm.targetMoveLocation.Get(smi), this.shocking.findDestination, this.delay, false).Toggle("BatteryDrain", new StateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.State.Callback(StressShockChore.AddBatteryDrainModifier), new StateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.State.Callback(StressShockChore.RemoveBatteryDrainModifier)).Enter(delegate(StressShockChore.StatesInstance smi)
+			{
+				smi.ShowBeam(true);
+			})
+				.Update(delegate(StressShockChore.StatesInstance smi, float dt)
+				{
+					smi.PickShockTarget(smi);
+					smi.ShockUpdate200(smi, dt);
+				}, UpdateRate.SIM_200ms, false)
+				.Update(delegate(StressShockChore.StatesInstance smi, float dt)
+				{
+					smi.ShockUpdateRender(smi, dt);
+				}, UpdateRate.RENDER_EVERY_TICK, false);
+			this.shocking.standStillShockingStuff.Toggle("BatteryDrain", new StateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.State.Callback(StressShockChore.AddBatteryDrainModifier), new StateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.State.Callback(StressShockChore.RemoveBatteryDrainModifier)).Enter(delegate(StressShockChore.StatesInstance smi)
+			{
+				smi.ShowBeam(true);
+			}).PlayAnim("interrupt_shocker", KAnim.PlayMode.Loop)
+				.ScheduleGoTo(2f, this.delay)
+				.Update(delegate(StressShockChore.StatesInstance smi, float dt)
+				{
+					smi.PickShockTarget(smi);
+					smi.ShockUpdate200(smi, dt);
+				}, UpdateRate.SIM_200ms, false)
+				.Update(delegate(StressShockChore.StatesInstance smi, float dt)
+				{
+					smi.ShockUpdateRender(smi, dt);
+				}, UpdateRate.RENDER_EVERY_TICK, false);
+			this.delay.ScheduleGoTo(0.5f, this.shocking);
+			this.complete.Enter(delegate(StressShockChore.StatesInstance smi)
+			{
+				smi.StopSM("complete");
+			});
+			this.offline.Enter(new StateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.State.Callback(StressShockChore.ForceStressMonitorToTimeOut)).ReturnSuccess();
+		}
+
+		// Token: 0x0400677B RID: 26491
+		public StateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.TargetParameter shocker;
+
+		// Token: 0x0400677C RID: 26492
+		public StateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.ObjectParameter<KBatchedAnimController[]> cosmeticBeamFXs;
+
+		// Token: 0x0400677D RID: 26493
+		public StateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.ObjectParameter<KBatchedAnimController> beamFX;
+
+		// Token: 0x0400677E RID: 26494
+		public StateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.ObjectParameter<KBatchedAnimController> impactFX;
+
+		// Token: 0x0400677F RID: 26495
+		public StateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.ObjectParameter<KBatchedAnimController> faceLightningFX;
+
+		// Token: 0x04006780 RID: 26496
+		public StateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.ObjectParameter<GameObject> beamTarget;
+
+		// Token: 0x04006781 RID: 26497
+		public StateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.ObjectParameter<GameObject> previousTarget;
+
+		// Token: 0x04006782 RID: 26498
+		public StateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.IntParameter targetMoveLocation;
+
+		// Token: 0x04006783 RID: 26499
+		public StateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.FloatParameter powerConsumed;
+
+		// Token: 0x04006784 RID: 26500
+		public StressShockChore.States.ShockStates shocking;
+
+		// Token: 0x04006785 RID: 26501
+		public GameStateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.State delay;
+
+		// Token: 0x04006786 RID: 26502
+		public GameStateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.State complete;
+
+		// Token: 0x04006787 RID: 26503
+		public GameStateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.State offline;
+
+		// Token: 0x02002683 RID: 9859
+		public class ShockStates : GameStateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.State
+		{
+			// Token: 0x0400AB26 RID: 43814
+			public GameStateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.State findDestination;
+
+			// Token: 0x0400AB27 RID: 43815
+			public GameStateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.State runAroundShockingStuff;
+
+			// Token: 0x0400AB28 RID: 43816
+			public GameStateMachine<StressShockChore.States, StressShockChore.StatesInstance, StressShockChore, object>.State standStillShockingStuff;
+		}
+	}
+}

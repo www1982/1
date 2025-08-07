@@ -1,0 +1,78 @@
+{
+  "className": "ClustercraftInteriorDoor",
+  "namespace": null,
+  "baseClass": "KMonoBehaviour",
+  "interfaces": [
+    "ISidescreenButtonControl"
+  ],
+  "summary": "Represents an interior door within a Clustercraft (likely a rocket or spaceship module in Oxygen Not Included).  This class manages the button that allows switching between interior and exterior views of the module within the game's side screen UI. It interacts with the `ClusterManager` to change the active world view.",
+  "keyMethods": [
+    {
+      "name": "OnPrefabInit",
+      "description": "Registers this door with the `Components.ClusterCraftInteriorDoors` list during prefab initialization.",
+      "parameters": [],
+      "return": "void"
+    },
+    {
+      "name": "OnCleanUp",
+      "description": "Removes this door from the `Components.ClusterCraftInteriorDoors` list during cleanup.",
+      "parameters": [],
+      "return": "void"
+    },
+    {
+      "name": "SidescreenEnabled",
+      "description": "Always returns `true`, indicating the side screen button is always enabled.",
+      "parameters": [],
+      "return": "bool"
+    },
+    {
+      "name": "SidescreenButtonInteractable",
+      "description": "Checks if the side screen button should be interactable. It's interactable only if the current world has a parent world (is a sub-world, likely representing the interior of a module) and the parent world ID differs from the current world ID. This prevents interaction when viewing the main world or if no parent world exists.",
+      "parameters": [],
+      "return": "bool"
+    },
+    {
+      "name": "OnSidescreenButtonPressed",
+      "description": "Handles the button press event. It switches the active world view in the `ClusterManager` to the parent world of the current world.",
+      "parameters": [],
+      "return": "void"
+    },
+    {
+      "name": "ButtonSideScreenSortOrder",
+      "description": "Defines the sorting order of this button within the side screen UI.  Returns 20.",
+      "parameters": [],
+      "return": "int"
+    },
+    {
+      "name": "SetButtonTextOverride",
+      "description": "Currently throws a `NotImplementedException`.  Likely intended for overriding the button text, but not implemented in this class.",
+      "parameters": [
+        {
+          "name": "text",
+          "type": "ButtonMenuTextOverride"
+        }
+      ],
+      "return": "void"
+    },
+    {
+      "name": "HorizontalGroupID",
+      "description": "Returns -1, indicating that this button doesn't belong to a specific horizontal group in the UI.",
+      "parameters": [],
+      "return": "int"
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "SidescreenButtonText",
+      "description": "Gets the text displayed on the side screen button.  Uses a string from `UI.UISIDESCREENS.ROCKETMODULESIDESCREEN.BUTTONVIEWEXTERIOR.LABEL`.",
+      "parameters": [],
+      "return": "string"
+    },
+    {
+      "name": "SidescreenButtonTooltip",
+      "description": "Gets the tooltip text for the side screen button. Uses different strings based on whether the button is interactable.",
+      "parameters": [],
+      "return": "string"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+﻿using System;
+using FMOD.Studio;
+using UnityEngine;
+
+// Token: 0x02000521 RID: 1313
+public class CreatureChewSoundEvent : SoundEvent
+{
+	// Token: 0x06001C2F RID: 7215 RVA: 0x00099353 File Offset: 0x00097553
+	public CreatureChewSoundEvent(string file_name, string sound_name, int frame, float min_interval)
+		: base(file_name, sound_name, frame, false, false, min_interval, true)
+	{
+	}
+
+	// Token: 0x06001C30 RID: 7216 RVA: 0x00099364 File Offset: 0x00097564
+	public override void OnPlay(AnimEventManager.EventPlayerData behaviour)
+	{
+		string sound = GlobalAssets.GetSound(StringFormatter.Combine(base.name, "_", CreatureChewSoundEvent.GetChewSound(behaviour)), false);
+		GameObject gameObject = behaviour.controller.gameObject;
+		base.objectIsSelectedAndVisible = SoundEvent.ObjectIsSelectedAndVisible(gameObject);
+		if (base.objectIsSelectedAndVisible || SoundEvent.ShouldPlaySound(behaviour.controller, sound, base.looping, this.isDynamic))
+		{
+			Vector3 vector = behaviour.position;
+			vector.z = 0f;
+			if (base.objectIsSelectedAndVisible)
+			{
+				vector = SoundEvent.AudioHighlightListenerPosition(vector);
+			}
+			EventInstance eventInstance = SoundEvent.BeginOneShot(sound, vector, SoundEvent.GetVolume(base.objectIsSelectedAndVisible), false);
+			if (behaviour.controller.gameObject.GetDef<BabyMonitor.Def>() != null)
+			{
+				eventInstance.setParameterByName("isBaby", 1f, false);
+			}
+			SoundEvent.EndOneShot(eventInstance);
+		}
+	}
+
+	// Token: 0x06001C31 RID: 7217 RVA: 0x0009942C File Offset: 0x0009762C
+	private static string GetChewSound(AnimEventManager.EventPlayerData behaviour)
+	{
+		string text = CreatureChewSoundEvent.DEFAULT_CHEW_SOUND;
+		EatStates.Instance smi = behaviour.controller.GetSMI<EatStates.Instance>();
+		if (smi != null)
+		{
+			Element latestMealElement = smi.GetLatestMealElement();
+			if (latestMealElement != null)
+			{
+				string creatureChewSound = latestMealElement.substance.GetCreatureChewSound();
+				if (!string.IsNullOrEmpty(creatureChewSound))
+				{
+					text = creatureChewSound;
+				}
+			}
+		}
+		return text;
+	}
+
+	// Token: 0x0400108A RID: 4234
+	private static string DEFAULT_CHEW_SOUND = "Rock";
+
+	// Token: 0x0400108B RID: 4235
+	private const string FMOD_PARAM_IS_BABY_ID = "isBaby";
+}

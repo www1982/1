@@ -1,0 +1,132 @@
+{
+  "className": "CrewJobsEntry",
+  "namespace": "",
+  "baseClass": "CrewListEntry",
+  "interfaces": [],
+  "summary": "CrewJobsEntry 扩展了 CrewListEntry 类，用于在《缺氧》游戏中显示和管理小人（Duplicant）的工作优先级。它允许玩家为每个小人设置不同工作类型的优先级，并根据小人的属性调整界面显示。该类与 ChoreConsumer 和 ChoreGroup 密切相关，用于处理小人的任务分配和执行。",
+  "keyMethods": [
+    {
+      "methodName": "Populate",
+      "parameters": "[MinionIdentity _identity]",
+      "description": "初始化 CrewJobsEntry，从给定的 MinionIdentity 获取 ChoreConsumer 组件，并创建用于设置每个工作组优先级的按钮。它还添加了 choreRulesChanged 事件监听器，以便在小人的工作规则发生变化时更新界面。",
+      "return": "void"
+    },
+    {
+      "methodName": "CreateChoreButton",
+      "parameters": "[ChoreGroup chore_group]",
+      "description": "创建一个用于控制特定 ChoreGroup 优先级的按钮。它从 Prefab_JobPriorityButton 实例化 UI 元素，并设置按钮的文本、颜色和事件监听器。颜色根据小人的相关属性值进行调整。",
+      "return": "void"
+    },
+    {
+      "methodName": "CreateAllTaskButton",
+      "parameters": "[]",
+      "description": "创建一个按钮来切换所有任务的启用/禁用状态。该按钮控制小人所有工作组的整体权限。",
+      "return": "void"
+    },
+    {
+      "methodName": "ToggleTasksAll",
+      "parameters": "[Button button]",
+      "description": "切换所有任务的启用/禁用状态。它迭代所有 ChoreGroup 并使用 ChoreConsumer 的 SetPermittedByUser 方法更新每个工作组的权限。它也会播放相应的音效。",
+      "return": "void"
+    },
+    {
+      "methodName": "OnPriorityPress",
+      "parameters": "[ChoreGroup chore_group]",
+      "description": "响应工作组优先级按钮的点击事件，切换指定 ChoreGroup 的启用/禁用状态，并播放相应的音效。",
+      "return": "void"
+    },
+    {
+      "methodName": "Refresh",
+      "parameters": "[object data = null]",
+      "description": "更新 CrewJobsEntry 的 UI，根据小人的属性和当前的工作组权限调整按钮的颜色和状态。该方法会在 LateUpdate 中自动调用，以确保 UI 始终与游戏状态同步。",
+      "return": "void"
+    },
+    {
+      "methodName": "OnPriorityButtonTooltip",
+      "parameters": "[CrewJobsEntry.PriorityButton b]",
+      "description": "生成工作组优先级按钮的工具提示文本，包含小人的相关属性值和是否能够执行该类型工作的信息。",
+      "return": "string"
+    },
+    {
+      "methodName": "LateUpdate",
+      "parameters": "[]",
+      "description": "在每一帧的末尾调用 Refresh 方法来更新 UI。",
+      "return": "void"
+    },
+    {
+      "methodName": "OnLevelUp",
+      "parameters": "[object data]",
+      "description": "在小人升级时调用 Dirty 方法来标记 UI 需要更新。",
+      "return": "void"
+    },
+    {
+      "methodName": "Dirty",
+      "parameters": "[]",
+      "description": "标记 CrewJobsEntry 为脏状态，并通知 CrewJobsScreen 更新 UI。",
+      "return": "void"
+    },
+    {
+      "methodName": "OnCleanUp",
+      "parameters": "[]",
+      "description": "在 CrewJobsEntry 被销毁时移除 choreRulesChanged 事件监听器。",
+      "return": "void"
+    }
+  ],
+  "keyProperties": [
+    {
+      "propertyName": "consumer",
+      "type": "ChoreConsumer",
+      "description": "指向与该 CrewJobsEntry 关联的 ChoreConsumer 组件的引用，用于访问和修改小人的工作规则。"
+    },
+    {
+      "propertyName": "Prefab_JobPriorityButton",
+      "type": "GameObject",
+      "description": "用于创建单个工作组优先级按钮的预制体。"
+    },
+    {
+      "propertyName": "Prefab_JobPriorityButtonAllTasks",
+      "type": "GameObject",
+      "description": "用于创建所有任务切换按钮的预制体。"
+    },
+    {
+      "propertyName": "PriorityButtons",
+      "type": "List<CrewJobsEntry.PriorityButton>",
+      "description": "包含所有工作组优先级按钮的列表。"
+    },
+    {
+      "propertyName": "AllTasksButton",
+      "type": "CrewJobsEntry.PriorityButton",
+      "description": "指向所有任务切换按钮的引用。"
+    },
+    {
+      "propertyName": "TooltipTextStyle_Title",
+      "type": "TextStyleSetting",
+      "description": "工具提示标题的文本样式。"
+    },
+    {
+      "propertyName": "TooltipTextStyle_Ability",
+      "type": "TextStyleSetting",
+      "description": "工具提示中属性值的文本样式。"
+    },
+    {
+      "propertyName": "TooltipTextStyle_AbilityPositiveModifier",
+      "type": "TextStyleSetting",
+      "description": "工具提示中属性值（正值）的文本样式。"
+    },
+    {
+      "propertyName": "TooltipTextStyle_AbilityNegativeModifier",
+      "type": "TextStyleSetting",
+      "description": "工具提示中属性值（负值）的文本样式。"
+    },
+    {
+      "propertyName": "dirty",
+      "type": "bool",
+      "description": "指示 UI 是否需要更新的标志。"
+    },
+    {
+      "propertyName": "rowToggleState",
+      "type": "CrewJobsScreen.everyoneToggleState",
+      "description": "表示该行所有任务的启用/禁用状态。"
+    }
+  ]
+}

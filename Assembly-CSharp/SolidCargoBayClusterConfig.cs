@@ -1,0 +1,70 @@
+﻿using System;
+using STRINGS;
+using TUNING;
+using UnityEngine;
+
+// Token: 0x020003FA RID: 1018
+public class SolidCargoBayClusterConfig : IBuildingConfig
+{
+	// Token: 0x060014D9 RID: 5337 RVA: 0x0007732D File Offset: 0x0007552D
+	public override string[] GetRequiredDlcIds()
+	{
+		return DlcManager.EXPANSION1;
+	}
+
+	// Token: 0x060014DA RID: 5338 RVA: 0x00077334 File Offset: 0x00075534
+	public override BuildingDef CreateBuildingDef()
+	{
+		string text = "CargoBayCluster";
+		int num = 5;
+		int num2 = 5;
+		string text2 = "rocket_cluster_storage_solid_kanim";
+		int num3 = 1000;
+		float num4 = 60f;
+		float[] dense_TIER = global::TUNING.BUILDINGS.ROCKETRY_MASS_KG.DENSE_TIER2;
+		string[] array = new string[] { SimHashes.Steel.ToString() };
+		float num5 = 9999f;
+		BuildLocationRule buildLocationRule = BuildLocationRule.Anywhere;
+		EffectorValues tier = NOISE_POLLUTION.NOISY.TIER2;
+		BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(text, num, num2, text2, num3, num4, dense_TIER, array, num5, buildLocationRule, global::TUNING.BUILDINGS.DECOR.NONE, tier, 0.2f);
+		BuildingTemplates.CreateRocketBuildingDef(buildingDef);
+		buildingDef.SceneLayer = Grid.SceneLayer.Building;
+		buildingDef.Invincible = true;
+		buildingDef.OverheatTemperature = 2273.15f;
+		buildingDef.Floodable = false;
+		buildingDef.AttachmentSlotTag = GameTags.Rocket;
+		buildingDef.ObjectLayer = ObjectLayer.Building;
+		buildingDef.RequiresPowerInput = false;
+		buildingDef.attachablePosition = new CellOffset(0, 0);
+		buildingDef.CanMove = true;
+		buildingDef.Cancellable = false;
+		buildingDef.ShowInBuildMenu = false;
+		buildingDef.AddSearchTerms(SEARCH_TERMS.TRANSPORT);
+		return buildingDef;
+	}
+
+	// Token: 0x060014DB RID: 5339 RVA: 0x00077408 File Offset: 0x00075608
+	public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
+	{
+		BuildingConfigManager.Instance.IgnoreDefaultKComponent(typeof(RequiresFoundation), prefab_tag);
+		go.AddOrGet<LoopingSounds>();
+		go.GetComponent<KPrefabID>().AddTag(RoomConstraints.ConstraintTags.IndustrialMachinery, false);
+		go.AddOrGet<BuildingAttachPoint>().points = new BuildingAttachPoint.HardPoint[]
+		{
+			new BuildingAttachPoint.HardPoint(new CellOffset(0, 5), GameTags.Rocket, null)
+		};
+	}
+
+	// Token: 0x060014DC RID: 5340 RVA: 0x0007746C File Offset: 0x0007566C
+	public override void DoPostConfigureComplete(GameObject go)
+	{
+		go = BuildingTemplates.ExtendBuildingToClusterCargoBay(go, this.CAPACITY, STORAGEFILTERS.STORAGE_LOCKERS_STANDARD, CargoBay.CargoType.Solids);
+		BuildingTemplates.ExtendBuildingToRocketModuleCluster(go, null, ROCKETRY.BURDEN.MAJOR, 0f, 0f);
+	}
+
+	// Token: 0x04000C6A RID: 3178
+	public const string ID = "CargoBayCluster";
+
+	// Token: 0x04000C6B RID: 3179
+	public float CAPACITY = ROCKETRY.SOLID_CARGO_BAY_CLUSTER_CAPACITY * ROCKETRY.CARGO_CAPACITY_SCALE;
+}

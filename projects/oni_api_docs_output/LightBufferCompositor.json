@@ -1,0 +1,102 @@
+{
+  "className": "LightBufferCompositor",
+  "namespace": "",
+  "baseClass": "MonoBehaviour",
+  "interfaces": [],
+  "summary": "该类负责合成光照缓冲区，并将其与其他后处理效果（如温度粒子效果和模糊）结合，最终渲染到屏幕上。它与游戏中的温度、辐射等视觉效果密切相关，使用了Unity的Shader和RenderTexture进行图像处理。  此类是《缺氧》游戏中后处理特效的关键组件，负责将光照信息与温度、辐射等环境效果进行混合，最终呈现出游戏中的视觉效果。",
+  "keyMethods": [
+    {
+      "methodName": "Start",
+      "summary": "初始化方法，加载并配置所需的材质（material和blurMaterial），注册Shader重载事件监听器。",
+      "parameters": [],
+      "returnType": "void"
+    },
+    {
+      "methodName": "OnEnable",
+      "summary": "在组件启用时重新加载Shader，确保材质正确配置。",
+      "parameters": [],
+      "returnType": "void"
+    },
+    {
+      "methodName": "DownSample4x",
+      "summary": "将纹理下采样4倍，用于模糊处理。使用多重采样技术实现高斯模糊效果。",
+      "parameters": [
+        {
+          "parameterName": "source",
+          "parameterType": "Texture",
+          "summary": "输入纹理"
+        },
+        {
+          "parameterName": "dest",
+          "parameterType": "RenderTexture",
+          "summary": "输出纹理"
+        }
+      ],
+      "returnType": "void"
+    },
+    {
+      "methodName": "ToggleParticles",
+      "summary": "切换温度粒子效果的启用状态。 通过ContextMenu属性，可以在Unity编辑器中直接调用此方法。",
+      "parameters": [],
+      "returnType": "void"
+    },
+    {
+      "methodName": "SetParticlesEnabled",
+      "summary": "设置温度粒子效果的启用状态。",
+      "parameters": [
+        {
+          "parameterName": "enabled",
+          "parameterType": "bool",
+          "summary": "是否启用粒子效果"
+        }
+      ],
+      "returnType": "void"
+    },
+    {
+      "methodName": "UpdateMaterialState",
+      "summary": "根据particlesEnabled属性更新材质关键字，控制温度粒子效果的显示或隐藏。",
+      "parameters": [],
+      "returnType": "void"
+    },
+    {
+      "methodName": "OnRenderImage",
+      "summary": "在渲染图像时调用，将光照缓冲区与温度纹理（经模糊处理）混合，最终渲染到屏幕。该方法处理了温度显示的模糊效果以及光照的合成。",
+      "parameters": [
+        {
+          "parameterName": "src",
+          "parameterType": "RenderTexture",
+          "summary": "源纹理"
+        },
+        {
+          "parameterName": "dest",
+          "parameterType": "RenderTexture",
+          "summary": "目标纹理"
+        }
+      ],
+      "returnType": "void"
+    },
+    {
+      "methodName": "OnShadersReloaded",
+      "summary": "当Shader重新加载时调用，更新材质的纹理属性，确保使用最新的Shader资源。此方法处理了多种环境纹理的加载和设置。",
+      "parameters": [],
+      "returnType": "void"
+    }
+  ],
+  "keyProperties": [
+    {
+      "propertyName": "material",
+      "propertyType": "Material",
+      "summary": "主要材质，用于合成光照缓冲区和其他特效。"
+    },
+    {
+      "propertyName": "blurMaterial",
+      "propertyType": "Material",
+      "summary": "用于模糊处理的材质。"
+    },
+    {
+      "propertyName": "particlesEnabled",
+      "propertyType": "bool",
+      "summary": "控制温度粒子效果是否启用的布尔值。"
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "className": "LogicAlarm",
+  "namespace": "",
+  "baseClass": "KMonoBehaviour",
+  "interfaces": [
+    "ISaveLoadable"
+  ],
+  "summary": "LogicAlarm是一个KMonoBehaviour组件，用于在游戏逻辑电路满足特定条件时触发通知。它可以配置通知名称、类型、是否暂停游戏以及是否缩放镜头。该组件监听逻辑电路的输入变化，并在条件满足时执行相应的操作，包括播放动画、显示通知以及可选地暂停游戏和缩放镜头。  它利用了`Notifier`组件发送通知，并通过`KBatchedAnimController`管理动画播放。  该类包含序列化配置，允许保存和加载其设置。",
+  "keyMethods": [
+    {
+      "methodName": "OnPrefabInit",
+      "summary": "在预制件初始化时订阅复制设置事件。",
+      "parameters": []
+    },
+    {
+      "methodName": "OnCopySettings",
+      "summary": "从另一个LogicAlarm组件复制设置。用于复制建筑设置。",
+      "parameters": [
+        {
+          "name": "data",
+          "type": "object",
+          "description": "包含另一个LogicAlarm组件的GameObject。"
+        }
+      ]
+    },
+    {
+      "methodName": "OnSpawn",
+      "summary": "在组件实例化到场景中时，添加Notifier组件，订阅逻辑值变化事件，初始化通知名称和提示信息，并更新视觉状态和通知。",
+      "parameters": []
+    },
+    {
+      "methodName": "UpdateVisualState",
+      "summary": "根据当前状态播放相应的动画（开启或关闭）。",
+      "parameters": []
+    },
+    {
+      "methodName": "OnLogicValueChanged",
+      "summary": "处理逻辑电路输入值变化的事件。根据输入值是否激活，决定是否触发通知、暂停游戏、缩放镜头以及更新视觉状态。",
+      "parameters": [
+        {
+          "name": "data",
+          "type": "object",
+          "description": "包含新的逻辑值的LogicValueChanged事件数据。"
+        }
+      ]
+    },
+    {
+      "methodName": "PushNotification",
+      "summary": "使用Notifier组件发送通知。",
+      "parameters": []
+    },
+    {
+      "methodName": "UpdateNotification",
+      "summary": "更新或清除通知。",
+      "parameters": [
+        {
+          "name": "clear",
+          "type": "bool",
+          "description": "是否清除通知。"
+        }
+      ]
+    },
+    {
+      "methodName": "CreateNotification",
+      "summary": "创建一个新的Notification对象。",
+      "parameters": []
+    }
+  ],
+  "keyProperties": [
+    {
+      "propertyName": "notificationName",
+      "type": "string",
+      "summary": "通知的名称。"
+    },
+    {
+      "propertyName": "notificationTooltip",
+      "type": "string",
+      "summary": "通知的提示信息。"
+    },
+    {
+      "propertyName": "notificationType",
+      "type": "NotificationType",
+      "summary": "通知的类型。"
+    },
+    {
+      "propertyName": "pauseOnNotify",
+      "type": "bool",
+      "summary": "通知时是否暂停游戏。"
+    },
+    {
+      "propertyName": "zoomOnNotify",
+      "type": "bool",
+      "summary": "通知时是否缩放镜头。"
+    },
+    {
+      "propertyName": "cooldown",
+      "type": "float",
+      "summary": "冷却时间(未在代码中使用)。"
+    },
+    {
+      "propertyName": "copyBuildingSettings",
+      "type": "CopyBuildingSettings",
+      "summary": "用于复制建筑设置的组件。"
+    },
+    {
+      "propertyName": "wasOn",
+      "type": "bool",
+      "summary": "指示警报是否处于激活状态。"
+    },
+    {
+      "propertyName": "notifier",
+      "type": "Notifier",
+      "summary": "用于发送通知的组件。"
+    },
+    {
+      "propertyName": "notification",
+      "type": "Notification",
+      "summary": "当前的通知。"
+    },
+    {
+      "propertyName": "lastNotificationCreated",
+      "type": "Notification",
+      "summary": "最后创建的通知。"
+    },
+    {
+      "propertyName": "INPUT_PORT_ID",
+      "type": "HashedString",
+      "summary": "逻辑电路输入端口ID。"
+    },
+    {
+      "propertyName": "ON_ANIMS",
+      "type": "HashedString[]",
+      "summary": "开启状态的动画名称数组。"
+    },
+    {
+      "propertyName": "OFF_ANIMS",
+      "type": "HashedString[]",
+      "summary": "关闭状态的动画名称数组。"
+    }
+  ]
+}

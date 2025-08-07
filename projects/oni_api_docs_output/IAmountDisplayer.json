@@ -1,0 +1,68 @@
+{
+  "className": "IAmountDisplayer",
+  "namespace": "Klei.AI",
+  "baseClass": null,
+  "interfaces": [],
+  "summary": "此接口定义了用于显示数量信息的组件，例如小人（Duplicant）的属性值或资源的数量。它提供了获取数值字符串、描述和工具提示的方法，以及用于格式化数值的格式化器。这在《缺氧》Modding中非常有用，可以用来自定义显示资源或小人状态的UI元素。例如，你可以创建一个自定义的Mod，显示小人的自定义属性，并使用此接口来控制属性值的显示方式。",
+  "keyMethods": [
+    {
+      "methodName": "GetValueString",
+      "parameters": [
+        {
+          "name": "master",
+          "type": "Amount",
+          "description": "主数量对象，代表需要显示的数量的基准。"
+        },
+        {
+          "name": "instance",
+          "type": "AmountInstance",
+          "description": "数量的实例，表示特定情况下的数量值。这允许显示在不同上下文（例如，小人身上或建筑物中）中的不同数量值。"
+        }
+      ],
+      "returnType": "string",
+      "description": "返回表示数量值的字符串。"
+    },
+    {
+      "methodName": "GetDescription",
+      "parameters": [
+        {
+          "name": "master",
+          "type": "Amount",
+          "description": "主数量对象。"
+        },
+        {
+          "name": "instance",
+          "type": "AmountInstance",
+          "description": "数量实例。"
+        }
+      ],
+      "returnType": "string",
+      "description": "返回对数量值的描述字符串。"
+    },
+    {
+      "methodName": "GetTooltip",
+      "parameters": [
+        {
+          "name": "master",
+          "type": "Amount",
+          "description": "主数量对象。"
+        },
+        {
+          "name": "instance",
+          "type": "AmountInstance",
+          "description": "数量实例。"
+        }
+      ],
+      "returnType": "string",
+      "description": "返回数量值的工具提示字符串，用于在游戏界面中提供更详细的信息。"
+    }
+  ],
+  "keyProperties": [
+    {
+      "propertyName": "Formatter",
+      "type": "IAttributeFormatter",
+      "accessModifier": "get",
+      "description": "获取用于格式化数值的格式化器。这允许自定义数值的显示格式，例如小数位数或单位。"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "className": "ChemicalRefineryConfig",
+  "namespace": null,
+  "baseClass": "IBuildingConfig",
+  "interfaces": [
+    "IBuildingConfig"
+  ],
+  "summary": "配置化学精炼厂建筑的类。该类继承自IBuildingConfig接口，用于定义化学精炼厂在《缺氧》游戏中的属性、行为和配方。它定义了精炼厂的建造参数、操作机制、以及它能够处理的不同化学配方，包括盐水、精炼脂质、超级冷却剂和粘性凝胶。",
+  "keyMethods": [
+    {
+      "methodName": "CreateBuildingDef",
+      "summary": "创建化学精炼厂的BuildingDef。此方法定义了精炼厂的尺寸、外观、建造材料、噪音污染等级、电力消耗、以及进出管道类型等属性。它返回一个BuildingDef对象，该对象包含了精炼厂的所有建造信息。",
+      "parameters": [],
+      "returnType": "BuildingDef"
+    },
+    {
+      "methodName": "ConfigureBuildingTemplate",
+      "summary": "配置精炼厂游戏对象的模板。此方法向游戏对象添加了各种组件，例如DropAllWorkable（丢弃所有可操作物品）、BuildingComplete（建筑完成）、ComplexFabricator（复杂制造器）、FabricatorIngredientStatusManager（制造器成分状态管理器）、CopyBuildingSettings（复制建筑设置）以及Prioritizable（可优先处理）。它还设置了制造器的各项属性，例如操作方式、所需技能、动画、储存容量、以及最重要的化学配方。",
+      "parameters": [
+        {
+          "parameterName": "go",
+          "parameterType": "GameObject",
+          "description": "化学精炼厂的游戏对象。"
+        },
+        {
+          "parameterName": "prefab_tag",
+          "parameterType": "Tag",
+          "description": "精炼厂的预制件标签。"
+        }
+      ],
+      "returnType": "void"
+    },
+    {
+      "methodName": "DoPostConfigureComplete",
+      "summary": "在精炼厂配置完成后执行的额外配置。此方法设置了精炼厂的一些额外属性，例如取消管道质量检查、设置小人操作时的状态和技能加成、以及设置工作动画。",
+      "parameters": [
+        {
+          "parameterName": "go",
+          "parameterType": "GameObject",
+          "description": "化学精炼厂的游戏对象。"
+        }
+      ],
+      "returnType": "void"
+    }
+  ],
+  "keyProperties": [
+    {
+      "propertyName": "ID",
+      "summary": "化学精炼厂的唯一标识符。",
+      "type": "string",
+      "isConst": true
+    },
+    {
+      "propertyName": "RefineryStoredItemModifiers",
+      "summary": "定义了精炼厂存储物品的修饰符列表。这些修饰符包括隐藏(Hide)、保存(Preserve)、绝缘(Insulate)和密封(Seal)，影响物品在精炼厂存储时的状态。",
+      "type": "List<Storage.StoredItemModifier>",
+      "isStatic": true
+    },
+    {
+      "propertyName": "INPUT_KG",
+      "summary": "精炼厂输入材料的重量（千克）。",
+      "type": "float",
+      "isConst": true
+    },
+    {
+      "propertyName": "OUTPUT_KG",
+      "summary": "精炼厂输出产品的重量（千克）。",
+      "type": "float",
+      "isConst": true
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+﻿using System;
+using System.Collections.Generic;
+using STRINGS;
+using TUNING;
+using UnityEngine;
+
+// Token: 0x020001A6 RID: 422
+public class PrickleGrassConfig : IEntityConfig
+{
+	// Token: 0x06000821 RID: 2081 RVA: 0x00037320 File Offset: 0x00035520
+	public GameObject CreatePrefab()
+	{
+		string text = "PrickleGrass";
+		string text2 = global::STRINGS.CREATURES.SPECIES.PRICKLEGRASS.NAME;
+		string text3 = global::STRINGS.CREATURES.SPECIES.PRICKLEGRASS.DESC;
+		float num = 1f;
+		EffectorValues positive_DECOR_EFFECT = PrickleGrassConfig.POSITIVE_DECOR_EFFECT;
+		GameObject gameObject = EntityTemplates.CreatePlacedEntity(text, text2, text3, num, Assets.GetAnim("bristlebriar_kanim"), "grow_seed", Grid.SceneLayer.BuildingFront, 1, 1, positive_DECOR_EFFECT, default(EffectorValues), SimHashes.Creature, null, 293f);
+		EntityTemplates.ExtendEntityToBasicPlant(gameObject, 218.15f, 283.15f, 303.15f, 398.15f, new SimHashes[]
+		{
+			SimHashes.Oxygen,
+			SimHashes.ContaminatedOxygen,
+			SimHashes.CarbonDioxide
+		}, true, 0f, 0.15f, null, true, false, true, true, 2400f, 0f, 900f, "PrickleGrassOriginal", global::STRINGS.CREATURES.SPECIES.PRICKLEGRASS.NAME);
+		PrickleGrass prickleGrass = gameObject.AddOrGet<PrickleGrass>();
+		prickleGrass.positive_decor_effect = PrickleGrassConfig.POSITIVE_DECOR_EFFECT;
+		prickleGrass.negative_decor_effect = PrickleGrassConfig.NEGATIVE_DECOR_EFFECT;
+		GameObject gameObject2 = gameObject;
+		IHasDlcRestrictions hasDlcRestrictions = this as IHasDlcRestrictions;
+		SeedProducer.ProductionType productionType = SeedProducer.ProductionType.Hidden;
+		string text4 = "PrickleGrassSeed";
+		string text5 = global::STRINGS.CREATURES.SPECIES.SEEDS.PRICKLEGRASS.NAME;
+		string text6 = global::STRINGS.CREATURES.SPECIES.SEEDS.PRICKLEGRASS.DESC;
+		KAnimFile anim = Assets.GetAnim("seed_bristlebriar_kanim");
+		string text7 = "object";
+		int num2 = 1;
+		List<Tag> list = new List<Tag>();
+		list.Add(GameTags.DecorSeed);
+		SingleEntityReceptacle.ReceptacleDirection receptacleDirection = SingleEntityReceptacle.ReceptacleDirection.Top;
+		string text8 = global::STRINGS.CREATURES.SPECIES.PRICKLEGRASS.DOMESTICATEDDESC;
+		EntityTemplates.CreateAndRegisterPreviewForPlant(EntityTemplates.CreateAndRegisterSeedForPlant(gameObject2, hasDlcRestrictions, productionType, text4, text5, text6, anim, text7, num2, list, receptacleDirection, default(Tag), 10, text8, EntityTemplates.CollisionShape.CIRCLE, 0.25f, 0.25f, null, "", false), "PrickleGrass_preview", Assets.GetAnim("bristlebriar_kanim"), "place", 1, 1);
+		return gameObject;
+	}
+
+	// Token: 0x06000822 RID: 2082 RVA: 0x00037491 File Offset: 0x00035691
+	public void OnPrefabInit(GameObject inst)
+	{
+	}
+
+	// Token: 0x06000823 RID: 2083 RVA: 0x00037493 File Offset: 0x00035693
+	public void OnSpawn(GameObject inst)
+	{
+	}
+
+	// Token: 0x0400060C RID: 1548
+	public const string ID = "PrickleGrass";
+
+	// Token: 0x0400060D RID: 1549
+	public const string SEED_ID = "PrickleGrassSeed";
+
+	// Token: 0x0400060E RID: 1550
+	public static readonly EffectorValues POSITIVE_DECOR_EFFECT = DECOR.BONUS.TIER3;
+
+	// Token: 0x0400060F RID: 1551
+	public static readonly EffectorValues NEGATIVE_DECOR_EFFECT = DECOR.PENALTY.TIER3;
+}

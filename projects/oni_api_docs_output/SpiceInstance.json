@@ -1,0 +1,35 @@
+{
+  "className": "SpiceInstance",
+  "namespace": null,
+  "baseClass": null,
+  "interfaces": [],
+  "summary": "表示香料磨碎机中香料实例的结构体。它包含香料的ID、总重量以及其相关的属性修改器和状态奖励。  这个结构体很可能用于在《缺氧》游戏中跟踪和管理香料，并计算其对小人属性的影响。 `SpiceGrinder`  类似乎包含香料配置数据，通过索引 `Id` 来访问特定香料的属性。",
+  "keyMethods": [],
+  "keyProperties": [
+    {
+      "name": "Id",
+      "type": "Tag",
+      "summary": "香料实例的唯一标识符。  这很可能是游戏内部使用的标签系统中的一个标签，用于标识具体的香料类型。"
+    },
+    {
+      "name": "TotalKG",
+      "type": "float",
+      "summary": "香料实例的总重量，单位为千克 (KG)。"
+    },
+    {
+      "name": "CalorieModifier",
+      "type": "AttributeModifier",
+      "summary": "该香料对小人卡路里属性的修改器。  `AttributeModifier`  很可能是一个自定义结构体或类，定义了属性修改的数值和类型（例如，加成或减成）。  这与游戏中的小人需求（例如，卡路里摄入）密切相关。"
+    },
+    {
+      "name": "FoodModifier",
+      "type": "AttributeModifier",
+      "summary": "该香料对小人食物属性的修改器。  类似于 `CalorieModifier`，它定义了香料对小人食物相关属性的影响。这可能与小人的饱腹感或其他食物相关属性有关。"
+    },
+    {
+      "name": "StatBonus",
+      "type": "Effect",
+      "summary": "该香料带来的状态奖励。 `Effect`  可能表示一个游戏中的状态效果，例如，增加小人的工作效率或其他属性。  这与游戏中的状态系统紧密相关。"
+    }
+  ]
+}

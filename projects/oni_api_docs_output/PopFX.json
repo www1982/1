@@ -1,0 +1,109 @@
+{
+  "className": "PopFX",
+  "namespace": "",
+  "baseClass": "KMonoBehaviour",
+  "interfaces": [],
+  "summary": "This class manages visual pop-up effects (likely for UI notifications) in the game.  It spawns a pop-up with an icon, text, and optional tracking of a target Transform. The pop-up's lifecycle includes spawning, updating its position (potentially following a target), and recycling for reuse.  It's designed to be efficient by recycling instances instead of constantly creating new ones. The effect is tied to the active world, ensuring it's only visible when relevant.",
+  "keyMethods": [
+    {
+      "name": "Recycle",
+      "description": "Resets the PopFX instance to its initial state, releasing it back to a pool managed by PopFXManager for reuse.  Clears references, sets flags, and deactivates the GameObject.",
+      "parameters": []
+    },
+    {
+      "name": "Spawn",
+      "description": "Spawns a new pop-up effect. Takes an icon, text, optional target transform for tracking, offset, lifetime, and tracking flag as parameters. It calculates the initial position, subscribes to world change events, and sets the effect's active state.",
+      "parameters": [
+        {
+          "name": "Icon",
+          "type": "Sprite",
+          "description": "The sprite to display as the icon."
+        },
+        {
+          "name": "Text",
+          "type": "string",
+          "description": "The text to display."
+        },
+        {
+          "name": "TargetTransform",
+          "type": "Transform",
+          "description": "Optional. If provided, the pop-up will track this transform's position."
+        },
+        {
+          "name": "Offset",
+          "type": "Vector3",
+          "description": "Offset from the target or starting position."
+        },
+        {
+          "name": "LifeTime",
+          "type": "float",
+          "description": "The lifespan of the effect in seconds. Defaults to 1.5f."
+        },
+        {
+          "name": "TrackTarget",
+          "type": "bool",
+          "description": "Whether to track the target transform. Defaults to false."
+        }
+      ]
+    },
+    {
+      "name": "OnActiveWorldChanged",
+      "description": "Handles world change events. Updates the PopFX's active state based on the active world ID.",
+      "parameters": [
+        {
+          "name": "data",
+          "type": "object",
+          "description": "A Tuple containing world IDs (likely old and new)."
+        }
+      ]
+    },
+    {
+      "name": "SetWorldActive",
+      "description": "Sets the active state of the PopFX based on whether it's in the currently active world. Uses Grid.WorldIdx to determine world ID based on cell position.",
+      "parameters": [
+        {
+          "name": "worldId",
+          "type": "int",
+          "description": "The ID of the world to check against."
+        }
+      ]
+    },
+    {
+      "name": "Update",
+      "description": "Updates the pop-up's position and alpha value over time.  If tracking a target, the position follows the target; otherwise, it remains at its starting position.  The effect fades out as its lifetime approaches.",
+      "parameters": []
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "Speed",
+      "type": "float",
+      "description": "The speed at which the pop-up moves vertically."
+    },
+    {
+      "name": "IconDisplay",
+      "type": "Image",
+      "description": "Unity UI Image component for displaying the icon."
+    },
+    {
+      "name": "TextDisplay",
+      "type": "LocText",
+      "description": "Localized text component for displaying the text."
+    },
+    {
+      "name": "canvasGroup",
+      "type": "CanvasGroup",
+      "description": "Unity UI CanvasGroup for controlling the effect's alpha."
+    },
+    {
+      "name": "lifetime",
+      "type": "float",
+      "description": "The total lifetime of the effect in seconds."
+    },
+    {
+      "name": "lifeElapsed",
+      "type": "float",
+      "description": "Elapsed time since the effect started."
+    }
+  ]
+}

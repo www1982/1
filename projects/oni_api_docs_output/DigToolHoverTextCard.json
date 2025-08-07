@@ -1,0 +1,30 @@
+{
+  "className": "DigToolHoverTextCard",
+  "namespace": null,
+  "baseClass": "HoverTextConfiguration",
+  "interfaces": [],
+  "summary": "This class extends `HoverTextConfiguration` and is responsible for displaying information when hovering over diggable tiles in the game world using a digging tool. It overrides the `UpdateHoverElements` method to dynamically generate and display information about the element under the cursor, including its name, material category, mass, and hardness.  The information is context-sensitive, showing a warning if the tile is not visible or not diggable.",
+  "keyMethods": [
+    {
+      "methodName": "UpdateHoverElements",
+      "parameters": [
+        {
+          "name": "selected",
+          "type": "List<KSelectable>",
+          "description": "A list of selected objects.  In this context, likely unused as the focus is on the tile under the cursor."
+        }
+      ],
+      "summary": "This method is called when the player hovers over a tile with a digging tool. It determines the tile's properties (element type, mass, hardness etc.) and draws relevant information on the hover screen.  Handles cases where the tile is not visible or not diggable.",
+      "return": "void",
+      "notes": "Utilizes `Grid` to access game world data, `HoverTextScreen` and `HoverTextDrawer` for UI drawing, and `Element` for material properties.  It leverages several helper functions like `HoverTextHelper.MassStringsReadOnly` and `GameUtil.GetHardnessString` for formatted data retrieval."
+    }
+  ],
+  "keyProperties": [
+    {
+      "propertyName": "hoverScreenElements",
+      "type": "DigToolHoverTextCard.HoverScreenFields",
+      "summary": "A private struct containing references to GameObject UI elements displayed on the hover screen. This likely facilitates updating individual UI elements with dynamic data during `UpdateHoverElements`.",
+      "notes": "Provides a structured way to manage and access the various UI elements which show the tile's properties (ElementName, ElementMass, ElementHardness, etc.)."
+    }
+  ]
+}

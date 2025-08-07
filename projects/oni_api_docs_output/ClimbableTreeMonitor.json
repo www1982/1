@@ -1,0 +1,91 @@
+{
+  "className": "ClimbableTreeMonitor",
+  "namespace": "",
+  "baseClass": "GameStateMachine<ClimbableTreeMonitor, ClimbableTreeMonitor.Instance, IStateMachineTarget, ClimbableTreeMonitor.Def>",
+  "interfaces": [],
+  "summary": "This class manages the behavior of duplicants climbing trees in Oxygen Not Included. It uses a state machine to control when and how duplicants search for and climb climbable trees.  The search is periodically triggered and considers factors such as distance, accessibility via the Navigator component, and whether a tree is already reserved by another creature or has usable seeds/items in the case of trees acting as storage.",
+  "keyMethods": [
+    {
+      "name": "InitializeStates",
+      "description": "Initializes the state machine.  It sets up a toggle behavior that activates based on whether duplicants want to climb a tree (GameTags.Creatures.WantsToClimbTree). The UpdateHasClimbable() method is called when activated, and OnClimbComplete() is called when deactivated.",
+      "parameters": [
+        {
+          "name": "default_state",
+          "type": "StateMachine.BaseState",
+          "description": "The default state of the state machine."
+        }
+      ],
+      "return": "void"
+    },
+    {
+      "name": "Instance.UpdateHasClimbable",
+      "description": "Checks if there's a climbable tree target. If not, it initiates a search within a time interval defined by `Def.searchMinInterval` and `Def.searchMaxInterval`. It uses `FindClimbableTree()` to find a suitable target.",
+      "parameters": [],
+      "return": "bool",
+      "returnDescription": "True if a climbable tree target is found, false otherwise."
+    },
+    {
+      "name": "Instance.FindClimbableTreeVisitor",
+      "description": "A visitor function used by GameScenePartitioner.AsyncSafeVisit to efficiently search for climbable trees within a given radius.  It checks if the object is reserved, reachable by the navigator, and if it's a ForestTreeSeedMonitor with available seeds, or a StorageLocker with removable items.",
+      "parameters": [
+        {
+          "name": "obj",
+          "type": "object",
+          "description": "The object being visited (KMonoBehaviour)."
+        },
+        {
+          "name": "context",
+          "type": "ClimbableTreeMonitor.Instance.FindClimableTreeContext",
+          "description": "Context containing the navigator and a list to store found targets."
+        }
+      ],
+      "return": "bool",
+      "returnDescription": "Always returns true; the actual filtering happens within the function itself."
+    },
+    {
+      "name": "Instance.FindClimbableTree",
+      "description": "Searches for a climbable tree within a radius of 10 cells around the duplicant. It uses GameScenePartitioner to efficiently search through plants and buildings.  A random target is selected from the found trees.",
+      "parameters": [],
+      "return": "void"
+    },
+    {
+      "name": "Instance.OnClimbComplete",
+      "description": "Called when a duplicant finishes climbing a tree. Resets the climbTarget.",
+      "parameters": [],
+      "return": "void"
+    },
+    {
+      "name": "Instance.RefreshSearchTime",
+      "description": "Updates the next time a search for a climbable tree will be performed. Uses a random interval between `Def.searchMinInterval` and `Def.searchMaxInterval`.",
+      "parameters": [],
+      "return": "void"
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "MAX_NAV_COST",
+      "type": "int",
+      "description": "A constant representing the maximum navigation cost (likely used internally for pathfinding, but not directly accessed in the provided code).  This is the maximum integer value."
+    },
+    {
+      "name": "Def.searchMinInterval",
+      "type": "float",
+      "description": "The minimum time interval (in seconds) between searches for a climbable tree."
+    },
+    {
+      "name": "Def.searchMaxInterval",
+      "type": "float",
+      "description": "The maximum time interval (in seconds) between searches for a climbable tree."
+    },
+    {
+      "name": "Instance.climbTarget",
+      "type": "GameObject",
+      "description": "The currently selected climbable tree (GameObject)."
+    },
+    {
+      "name": "Instance.nextSearchTime",
+      "type": "float",
+      "description": "The time (in seconds since the game started) at which the next search for a climbable tree will be performed."
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "className": "CropTracker",
+  "namespace": "",
+  "baseClass": "WorldTracker",
+  "interfaces": [],
+  "summary": "此类继承自WorldTracker，用于追踪游戏中可种植作物的数量。它统计具有`GameTags.CropSeed`标签且未枯萎(`GameTags.Wilting`)的植物数量，并将其作为百分比显示。该类是《缺氧》Mod开发中用于监控农作物生长的重要组件，可以被用于创建自定义的UI显示或游戏逻辑。",
+  "keyMethods": [
+    {
+      "name": "CropTracker(int worldID)",
+      "description": "构造函数，传入世界ID。继承自基类WorldTracker，用于初始化CropTracker实例，并关联到指定的世界。",
+      "parameters": [
+        {
+          "name": "worldID",
+          "type": "int",
+          "description": "游戏世界ID。"
+        }
+      ]
+    },
+    {
+      "name": "UpdateData()",
+      "description": "更新作物数量数据。遍历所有可种植地块(`PlantablePlot`)，统计符合条件的作物数量，并将数量添加到基类`WorldTracker`的内部计数器中。 符合条件的作物需同时满足：1. 已种植植物(`plant`不为空)；2. 拥有`GameTags.CropSeed`标签 (表示是作物种子)；3. 不包含`GameTags.Wilting`标签 (表示未枯萎)。",
+      "parameters": [],
+      "return": "void"
+    },
+    {
+      "name": "FormatValueString(float value)",
+      "description": "格式化数值字符串，将数值转换为百分比字符串。该方法重写了基类的方法，将数值加上百分号后返回，用于在UI中显示。",
+      "parameters": [
+        {
+          "name": "value",
+          "type": "float",
+          "description": "要格式化的数值 (作物数量)"
+        }
+      ],
+      "return": "string"
+    }
+  ],
+  "keyProperties": []
+}

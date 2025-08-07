@@ -1,0 +1,167 @@
+﻿using System;
+
+// Token: 0x02000933 RID: 2355
+public class GasBreatherFromWorldProvider : OxygenBreather.IGasProvider
+{
+	// Token: 0x060042CA RID: 17098 RVA: 0x0017FC06 File Offset: 0x0017DE06
+	public GasBreatherFromWorldProvider.BreathableCellData GetBestBreathableCellAtCurrentLocation()
+	{
+		return GasBreatherFromWorldProvider.GetBestBreathableCellAroundSpecificCell(Grid.PosToCell(this.oxygenBreather), GasBreatherFromWorldProvider.DEFAULT_BREATHABLE_OFFSETS, this.oxygenBreather);
+	}
+
+	// Token: 0x060042CB RID: 17099 RVA: 0x0017FC24 File Offset: 0x0017DE24
+	public static GasBreatherFromWorldProvider.BreathableCellData GetBestBreathableCellAroundSpecificCell(int theSpecificCell, CellOffset[] breathRange, OxygenBreather breather)
+	{
+		float num;
+		return GasBreatherFromWorldProvider.GetBestBreathableCellAroundSpecificCell(theSpecificCell, breathRange, breather, out num);
+	}
+
+	// Token: 0x060042CC RID: 17100 RVA: 0x0017FC3C File Offset: 0x0017DE3C
+	public static GasBreatherFromWorldProvider.BreathableCellData GetBestBreathableCellAroundSpecificCell(int theSpecificCell, CellOffset[] breathRange, OxygenBreather breather, out float totalBreathableMassAroundCell)
+	{
+		if (breathRange == null)
+		{
+			breathRange = GasBreatherFromWorldProvider.DEFAULT_BREATHABLE_OFFSETS;
+		}
+		float num = 0f;
+		int num2 = theSpecificCell;
+		SimHashes simHashes = SimHashes.Vacuum;
+		totalBreathableMassAroundCell = 0f;
+		foreach (CellOffset cellOffset in breathRange)
+		{
+			int num3 = Grid.OffsetCell(theSpecificCell, cellOffset);
+			SimHashes simHashes2;
+			float breathableCellMass = GasBreatherFromWorldProvider.GetBreathableCellMass(num3, out simHashes2);
+			totalBreathableMassAroundCell += breathableCellMass;
+			if (breathableCellMass > num && breathableCellMass > breather.noOxygenThreshold)
+			{
+				num = breathableCellMass;
+				num2 = num3;
+				simHashes = simHashes2;
+			}
+		}
+		return new GasBreatherFromWorldProvider.BreathableCellData
+		{
+			Cell = num2,
+			ElementID = simHashes,
+			Mass = num,
+			IsBreathable = (simHashes != SimHashes.Vacuum)
+		};
+	}
+
+	// Token: 0x060042CD RID: 17101 RVA: 0x0017FCF0 File Offset: 0x0017DEF0
+	private static float GetBreathableCellMass(int cell, out SimHashes elementID)
+	{
+		elementID = SimHashes.Vacuum;
+		if (Grid.IsValidCell(cell))
+		{
+			Element element = Grid.Element[cell];
+			if (element.HasTag(GameTags.Breathable))
+			{
+				elementID = element.id;
+				return Grid.Mass[cell];
+			}
+		}
+		return 0f;
+	}
+
+	// Token: 0x060042CE RID: 17102 RVA: 0x0017FD3A File Offset: 0x0017DF3A
+	public void OnSetOxygenBreather(OxygenBreather oxygen_breather)
+	{
+		this.oxygenBreather = oxygen_breather;
+		this.nav = this.oxygenBreather.GetComponent<Navigator>();
+	}
+
+	// Token: 0x060042CF RID: 17103 RVA: 0x0017FD54 File Offset: 0x0017DF54
+	public void OnClearOxygenBreather(OxygenBreather oxygen_breather)
+	{
+	}
+
+	// Token: 0x060042D0 RID: 17104 RVA: 0x0017FD56 File Offset: 0x0017DF56
+	public bool ShouldEmitCO2()
+	{
+		return this.nav.CurrentNavType != NavType.Tube;
+	}
+
+	// Token: 0x060042D1 RID: 17105 RVA: 0x0017FD69 File Offset: 0x0017DF69
+	public bool ShouldStoreCO2()
+	{
+		return false;
+	}
+
+	// Token: 0x060042D2 RID: 17106 RVA: 0x0017FD6C File Offset: 0x0017DF6C
+	public bool IsLowOxygen()
+	{
+		GasBreatherFromWorldProvider.BreathableCellData bestBreathableCellAtCurrentLocation = this.GetBestBreathableCellAtCurrentLocation();
+		return bestBreathableCellAtCurrentLocation.IsBreathable && bestBreathableCellAtCurrentLocation.Mass < this.oxygenBreather.lowOxygenThreshold;
+	}
+
+	// Token: 0x060042D3 RID: 17107 RVA: 0x0017FD9D File Offset: 0x0017DF9D
+	public bool HasOxygen()
+	{
+		return this.oxygenBreather.prefabID.HasTag(GameTags.RecoveringBreath) || this.oxygenBreather.prefabID.HasTag(GameTags.InTransitTube) || this.GetBestBreathableCellAtCurrentLocation().IsBreathable;
+	}
+
+	// Token: 0x060042D4 RID: 17108 RVA: 0x0017FDDA File Offset: 0x0017DFDA
+	public bool IsBlocked()
+	{
+		return this.oxygenBreather.HasTag(GameTags.HasSuitTank);
+	}
+
+	// Token: 0x060042D5 RID: 17109 RVA: 0x0017FDEC File Offset: 0x0017DFEC
+	public bool ConsumeGas(OxygenBreather oxygen_breather, float mass_to_consume)
+	{
+		if (this.nav.CurrentNavType != NavType.Tube)
+		{
+			GasBreatherFromWorldProvider.BreathableCellData bestBreathableCellAtCurrentLocation = this.GetBestBreathableCellAtCurrentLocation();
+			if (!bestBreathableCellAtCurrentLocation.IsBreathable)
+			{
+				return false;
+			}
+			SimHashes elementID = bestBreathableCellAtCurrentLocation.ElementID;
+			HandleVector<Game.ComplexCallbackInfo<Sim.MassConsumedCallback>>.Handle handle = Game.Instance.massConsumedCallbackManager.Add(new Action<Sim.MassConsumedCallback, object>(GasBreatherFromWorldProvider.OnSimConsumeCallback), oxygen_breather, "GasBreatherFromWorldProvider");
+			SimMessages.ConsumeMass(bestBreathableCellAtCurrentLocation.Cell, elementID, mass_to_consume, 3, handle.index);
+		}
+		return true;
+	}
+
+	// Token: 0x060042D6 RID: 17110 RVA: 0x0017FE58 File Offset: 0x0017E058
+	private static void OnSimConsumeCallback(Sim.MassConsumedCallback mass_cb_info, object data)
+	{
+		SimHashes id = ElementLoader.elements[(int)mass_cb_info.elemIdx].id;
+		OxygenBreather.BreathableGasConsumed(data as OxygenBreather, id, mass_cb_info.mass, mass_cb_info.temperature, mass_cb_info.diseaseIdx, mass_cb_info.diseaseCount);
+	}
+
+	// Token: 0x04002C9D RID: 11421
+	public static CellOffset[] DEFAULT_BREATHABLE_OFFSETS = new CellOffset[]
+	{
+		new CellOffset(0, 0),
+		new CellOffset(0, 1),
+		new CellOffset(1, 1),
+		new CellOffset(-1, 1),
+		new CellOffset(1, 0),
+		new CellOffset(-1, 0)
+	};
+
+	// Token: 0x04002C9E RID: 11422
+	private OxygenBreather oxygenBreather;
+
+	// Token: 0x04002C9F RID: 11423
+	private Navigator nav;
+
+	// Token: 0x02001911 RID: 6417
+	public struct BreathableCellData
+	{
+		// Token: 0x04007B15 RID: 31509
+		public int Cell;
+
+		// Token: 0x04007B16 RID: 31510
+		public SimHashes ElementID;
+
+		// Token: 0x04007B17 RID: 31511
+		public float Mass;
+
+		// Token: 0x04007B18 RID: 31512
+		public bool IsBreathable;
+	}
+}

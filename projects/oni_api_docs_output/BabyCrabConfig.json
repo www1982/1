@@ -1,0 +1,59 @@
+{
+  "className": "BabyCrabConfig",
+  "namespace": "Unspecified",
+  "baseClass": "IEntityConfig",
+  "interfaces": [
+    "IEntityConfig"
+  ],
+  "summary": "配置类，用于定义游戏内幼年螃蟹（Crab Baby）的属性和行为。继承自IEntityConfig接口，是《缺氧》Modding中定义新实体的标准方式。该类使用CrabConfig.CreateCrab方法创建幼年螃蟹的预制体，并使用EntityTemplates.ExtendEntityToBeingABaby将其扩展为幼年生物。",
+  "keyMethods": [
+    {
+      "methodName": "CreatePrefab",
+      "summary": "创建幼年螃蟹游戏对象预制体。调用CrabConfig.CreateCrab方法生成基本预制体，指定名称、描述、动画、是否为幼年生物、以及壳体的材质和生长所需时间。随后，使用EntityTemplates.ExtendEntityToBeingABaby方法扩展预制体，使其具有幼年生物的特性。最后，设置幼年螃蟹生长完成后掉落的单位数量。",
+      "parameters": [
+        {
+          "name": "None",
+          "type": "void",
+          "description": "无参数，直接返回GameObject"
+        }
+      ],
+      "returnType": "GameObject",
+      "returnDescription": "幼年螃蟹的GameObject预制体。"
+    },
+    {
+      "methodName": "OnPrefabInit",
+      "summary": "预制体初始化回调函数。此函数目前为空，可以被Mod开发者重写以在预制体初始化阶段添加自定义逻辑。",
+      "parameters": [
+        {
+          "name": "prefab",
+          "type": "GameObject",
+          "description": "幼年螃蟹的GameObject预制体。"
+        }
+      ],
+      "returnType": "void",
+      "returnDescription": "无返回值。"
+    },
+    {
+      "methodName": "OnSpawn",
+      "summary": "实体生成回调函数。此函数目前为空，可以被Mod开发者重写以在实体生成时添加自定义逻辑，例如设置初始状态或添加组件。",
+      "parameters": [
+        {
+          "name": "inst",
+          "type": "GameObject",
+          "description": "生成的幼年螃蟹的GameObject实例。"
+        }
+      ],
+      "returnType": "void",
+      "returnDescription": "无返回值。"
+    }
+  ],
+  "keyProperties": [
+    {
+      "propertyName": "ID",
+      "summary": "幼年螃蟹实体的唯一标识符。",
+      "type": "string",
+      "value": "\"CrabBaby\"",
+      "description": "用于在游戏中识别该实体。"
+    }
+  ]
+}

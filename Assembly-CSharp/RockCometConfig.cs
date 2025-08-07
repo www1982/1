@@ -1,0 +1,58 @@
+﻿using System;
+using STRINGS;
+using UnityEngine;
+
+// Token: 0x020002EA RID: 746
+public class RockCometConfig : IEntityConfig
+{
+	// Token: 0x06000F42 RID: 3906 RVA: 0x0005D4CC File Offset: 0x0005B6CC
+	public GameObject CreatePrefab()
+	{
+		GameObject gameObject = EntityTemplates.CreateEntity(RockCometConfig.ID, UI.SPACEDESTINATIONS.COMETS.ROCKCOMET.NAME, true);
+		gameObject.AddOrGet<SaveLoadRoot>();
+		gameObject.AddOrGet<LoopingSounds>();
+		Comet comet = gameObject.AddOrGet<Comet>();
+		float mass = ElementLoader.FindElementByHash(SimHashes.Regolith).defaultValues.mass;
+		comet.massRange = new Vector2(mass * 0.8f * 6f, mass * 1.2f * 6f);
+		comet.temperatureRange = new Vector2(323.15f, 423.15f);
+		comet.addTiles = 6;
+		comet.addTilesMinHeight = 2;
+		comet.addTilesMaxHeight = 8;
+		comet.entityDamage = 20;
+		comet.totalTileDamage = 0f;
+		comet.splashRadius = 1;
+		comet.impactSound = "Meteor_Large_Impact";
+		comet.flyingSoundID = 2;
+		comet.explosionEffectHash = SpawnFXHashes.MeteorImpactDirt;
+		PrimaryElement primaryElement = gameObject.AddOrGet<PrimaryElement>();
+		primaryElement.SetElement(SimHashes.Regolith, true);
+		primaryElement.Temperature = (comet.temperatureRange.x + comet.temperatureRange.y) / 2f;
+		KBatchedAnimController kbatchedAnimController = gameObject.AddOrGet<KBatchedAnimController>();
+		kbatchedAnimController.AnimFiles = new KAnimFile[] { Assets.GetAnim("meteor_rock_kanim") };
+		kbatchedAnimController.isMovable = true;
+		kbatchedAnimController.initialAnim = "fall_loop";
+		kbatchedAnimController.initialMode = KAnim.PlayMode.Loop;
+		gameObject.AddOrGet<KCircleCollider2D>().radius = 0.5f;
+		gameObject.AddTag(GameTags.Comet);
+		return gameObject;
+	}
+
+	// Token: 0x06000F43 RID: 3907 RVA: 0x0005D62D File Offset: 0x0005B82D
+	public void OnPrefabInit(GameObject go)
+	{
+	}
+
+	// Token: 0x06000F44 RID: 3908 RVA: 0x0005D62F File Offset: 0x0005B82F
+	public void OnSpawn(GameObject go)
+	{
+	}
+
+	// Token: 0x040009F2 RID: 2546
+	public static readonly string ID = "RockComet";
+
+	// Token: 0x040009F3 RID: 2547
+	private const SimHashes element = SimHashes.Regolith;
+
+	// Token: 0x040009F4 RID: 2548
+	private const int ADDED_CELLS = 6;
+}

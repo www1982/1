@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- 这是最关键的一行！告诉编译器我们的目标 -->
+    <TargetFramework>net472</TargetFramework>
+    
+    <!-- 明确告诉编译器这是一个类库 (生成 DLL) -->
+    <OutputType>Library</OutputType>
+    
+    <AssemblyName>MyOniMod</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    
+    <!-- 阻止编译器将引用的DLL复制到输出目录 -->
+    <Private>false</Private>
+  </PropertyGroup>
+
+  <!-- 引用我们上传到 lib 文件夹的游戏 DLL -->
+  <ItemGroup>
+    <Reference Include="/Users/user/Desktop/CODE/MOd/lib/Managed/Assembly-CSharp.dll" />
+    <Reference Include="/Users/user/Desktop/CODE/MOd/lib/Managed/Assembly-CSharp-firstpass.dll" />
+    <Reference Include="/Users/user/Desktop/CODE/MOd/lib/Managed/UnityEngine.dll" />
+    <Reference Include="/Users/user/Desktop/CODE/MOd/lib/Managed/0Harmony.dll" />
+    <Reference Include="/Users/user/Desktop/CODE/MOd/lib/Managed/UnityEngine.CoreModule.dll" />
+    <Reference Include="/Users/user/Desktop/CODE/MOd/lib/Managed/UnityEngine.UI.dll" />
+    <Reference Include="/Users/user/Desktop/CODE/MOd/lib/Managed/Unity.TextMeshPro.dll"/>
+    <Reference Include="/Users/user/Desktop/CODE/MOd/lib/Managed/UnityEngine.ImageConversionModule.dll" />
+    <Reference Include="/Users/user/Desktop/CODE/MOd/lib/Managed/Newtonsoft.Json.dll" />
+    <!-- 如果需要，继续添加其他 DLL -->
+  </ItemGroup>
+
+</Project>

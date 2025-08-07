@@ -1,0 +1,56 @@
+{
+  "className": "SkillPerkMissingComplainer",
+  "namespace": "",
+  "baseClass": "KMonoBehaviour",
+  "interfaces": [],
+  "summary": "这是一个附加在《缺氧》游戏对象上的组件，用于监测殖民地中是否存在拥有特定技能专精的小人。如果缺少该专精，则会在可选择的游戏对象上添加一个状态项提示。该组件继承自KMonoBehaviour，这表明它是一个在游戏世界中运行的脚本组件。",
+  "keyMethods": [
+    {
+      "methodName": "OnSpawn",
+      "summary": "在组件实例化到游戏世界中时调用。它订阅游戏事件 `-1523247426` (该事件可能与小人技能的更新相关)，并调用 `UpdateStatusItem` 来初始检查是否缺少所需的技能专精。",
+      "parameters": [],
+      "returnType": "void"
+    },
+    {
+      "methodName": "OnCleanUp",
+      "summary": "在组件从游戏世界中移除时调用。它取消先前订阅的游戏事件。",
+      "parameters": [],
+      "returnType": "void"
+    },
+    {
+      "methodName": "UpdateStatusItem",
+      "summary": "检查是否缺少所需的技能专精，并根据结果添加或移除游戏对象的状态项。如果缺少指定的技能专精 `requiredSkillPerk`，则添加 `Db.Get().BuildingStatusItems.ColonyLacksRequiredSkillPerk` 状态项；如果存在，则移除该状态项。该方法被 `OnSpawn` 调用一次，并作为游戏事件 `-1523247426` 的回调函数被调用。",
+      "parameters": [
+        {
+          "parameterName": "data",
+          "summary": "来自游戏事件的数据，在此处未使用。",
+          "type": "object"
+        }
+      ],
+      "returnType": "void"
+    },
+    {
+      "methodName": "GetMyWorldId",
+      "summary": "此方法未在提供的代码中定义，但根据上下文推断，它应该返回该组件所属的游戏世界ID，用于在 `MinionResume.AnyMinionHasPerk` 中进行正确的技能检查。",
+      "parameters": [],
+      "returnType": "int"
+    }
+  ],
+  "keyProperties": [
+    {
+      "propertyName": "requiredSkillPerk",
+      "summary": "一个字符串，指定了需要的小人技能专精。这是组件的核心配置参数。",
+      "type": "string"
+    },
+    {
+      "propertyName": "skillUpdateHandle",
+      "summary": "一个整数，表示游戏事件订阅的句柄，用于取消订阅。`-1` 表示未订阅。",
+      "type": "int"
+    },
+    {
+      "propertyName": "workStatusItemHandle",
+      "summary": "一个 Guid，表示添加的状态项的句柄，用于移除状态项。`Guid.Empty` 表示未添加状态项。",
+      "type": "Guid"
+    }
+  ]
+}

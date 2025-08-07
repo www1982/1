@@ -1,0 +1,111 @@
+{
+  "className": "Valve",
+  "namespace": "",
+  "baseClass": "Workable",
+  "interfaces": [
+    "ISaveLoadable"
+  ],
+  "summary": "Represents a valve in the game, controlling the flow of liquids or gases.  Inherits from `Workable`, meaning it can be interacted with by Duplicants. Implements `ISaveLoadable` for saving and loading game state.  This class manages the desired flow rate, interacts with the `ValveBase` component for visual and functional updates, and uses a `WorkChore` to handle Duplicant interaction.",
+  "keyMethods": [
+    {
+      "name": "QueuedMaxFlow",
+      "description": "Gets the maximum flow rate queued for the valve. Returns -1 if no chore is assigned.",
+      "returnType": "float",
+      "parameters": []
+    },
+    {
+      "name": "DesiredFlow",
+      "description": "Gets the desired flow rate for the valve.",
+      "returnType": "float",
+      "parameters": []
+    },
+    {
+      "name": "MaxFlow",
+      "description": "Gets the maximum flow rate allowed by the valve's base component.",
+      "returnType": "float",
+      "parameters": []
+    },
+    {
+      "name": "OnCopySettings",
+      "description": "Handles copying settings from another Valve instance. Used during building duplication.",
+      "returnType": "void",
+      "parameters": [
+        {
+          "name": "data",
+          "type": "object",
+          "description": "The GameObject containing the Valve to copy settings from."
+        }
+      ]
+    },
+    {
+      "name": "OnPrefabInit",
+      "description": "Initialization method called when the prefab is initialized. Sets up the valve's initial state, subscribes to the OnCopySettings event.",
+      "returnType": "void",
+      "parameters": []
+    },
+    {
+      "name": "OnSpawn",
+      "description": "Initialization method called when the valve is spawned into the game world. Sets the initial flow and adds a reference to the Prioritizable system.",
+      "returnType": "void",
+      "parameters": []
+    },
+    {
+      "name": "OnCleanUp",
+      "description": "Cleanup method called when the valve is removed from the game world. Removes the Prioritizable reference.",
+      "returnType": "void",
+      "parameters": []
+    },
+    {
+      "name": "ChangeFlow",
+      "description": "Changes the desired flow rate of the valve.  Manages the status items displayed to the player and creates or cancels the associated `WorkChore` depending on the current and desired flow rates.",
+      "returnType": "void",
+      "parameters": [
+        {
+          "name": "amount",
+          "type": "float",
+          "description": "The new desired flow rate."
+        }
+      ]
+    },
+    {
+      "name": "OnCompleteWork",
+      "description": "Called when a Duplicant completes work on the valve. Updates the flow rate.",
+      "returnType": "void",
+      "parameters": [
+        {
+          "name": "worker",
+          "type": "WorkerBase",
+          "description": "The Duplicant that completed the work."
+        }
+      ]
+    },
+    {
+      "name": "UpdateFlow",
+      "description": "Updates the valve's current flow rate to match the desired flow rate, updates animations, and removes any associated chore.",
+      "returnType": "void",
+      "parameters": []
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "valveBase",
+      "type": "ValveBase",
+      "description": "Reference to the ValveBase component, handling the visual and physical aspects of the valve."
+    },
+    {
+      "name": "desiredFlow",
+      "type": "float",
+      "description": "The desired flow rate of the valve."
+    },
+    {
+      "name": "chore",
+      "type": "Chore",
+      "description": "The current work chore associated with the valve, if any.  This chore represents a Duplicant's interaction with the valve."
+    },
+    {
+      "name": "copyBuildingSettings",
+      "type": "CopyBuildingSettings",
+      "description": "Reference to the CopyBuildingSettings component, used for duplicating the valve's settings."
+    }
+  ]
+}

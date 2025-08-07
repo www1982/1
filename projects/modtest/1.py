@@ -178,4 +178,8 @@ def run_ultimate_test_suite():
     print_header("所有测试执行完毕")
 
 if __name__ == "__main__":
-    run_ultimate_test_suite()
+    try:
+        run_ultimate_test_suite()
+    finally:
+        print("\n" + "="*25 + " SCRIPT FINISHED " + "="*25)
+        input("Press Enter to exit...")

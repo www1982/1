@@ -1,0 +1,71 @@
+{
+  "className": "BuildingFacadeInfo",
+  "namespace": null,
+  "baseClass": null,
+  "interfaces": [
+    "IBlueprintInfo",
+    "IHasDlcRestrictions"
+  ],
+  "summary": "Represents information about a building facade in Oxygen Not Included.  This class likely serves as configuration data for building facades, used by the game to display and manage them. It includes details such as ID, name, description, rarity, animation file, and DLC dependencies.  The `...Config` naming convention suggests its role as a configuration class, a key component in ONI modding.",
+  "keyMethods": [
+    {
+      "name": "BuildingFacadeInfo(string id, string name, string desc, PermitRarity rarity, string prefabId, string animFile, Dictionary<string, string> workables = null, string[] requiredDlcIds = null, string[] forbiddenDlcIds = null)",
+      "summary": "Constructor for BuildingFacadeInfo. Initializes all properties of the building facade, including its ID, name, description, rarity, prefab ID, animation file, associated workables, and required/forbidden DLCs.  This is a crucial method for Modders to create custom building facades."
+    },
+    {
+      "name": "GetRequiredDlcIds()",
+      "summary": "Returns an array of DLC IDs required for this building facade to be available.  Essential for Modders to ensure their building facades are only available with the correct DLCs installed."
+    },
+    {
+      "name": "GetForbiddenDlcIds()",
+      "summary": "Returns an array of DLC IDs that prevent this building facade from being available.  Useful for Modders to control compatibility with different DLCs, preventing conflicts or unexpected behavior."
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "id",
+      "type": "string",
+      "summary": "Unique identifier for the building facade.  Crucial for referencing this facade within the game and other mods."
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "summary": "Display name of the building facade.  This is what the player sees in-game."
+    },
+    {
+      "name": "desc",
+      "type": "string",
+      "summary": "Description of the building facade. Provides additional information to the player."
+    },
+    {
+      "name": "rarity",
+      "type": "PermitRarity",
+      "summary": "Rarity of the building facade, likely affecting its availability or acquisition."
+    },
+    {
+      "name": "animFile",
+      "type": "string",
+      "summary": "Path to the animation file for the building facade, defining its visual appearance."
+    },
+    {
+      "name": "prefabId",
+      "type": "string",
+      "summary": "Prefab ID likely referencing the underlying game object representing the building facade."
+    },
+    {
+      "name": "workables",
+      "type": "Dictionary<string, string>",
+      "summary": "Dictionary likely mapping work actions or interactions to specific identifiers.  This could be essential for defining the functionality of the facade."
+    },
+    {
+      "name": "requiredDlcIds",
+      "type": "string[]",
+      "summary": "Array of DLC IDs required for this building facade."
+    },
+    {
+      "name": "forbiddenDlcIds",
+      "type": "string[]",
+      "summary": "Array of DLC IDs that prevent this building facade from being available."
+    }
+  ]
+}

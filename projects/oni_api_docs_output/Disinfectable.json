@@ -1,0 +1,115 @@
+{
+  "className": "Disinfectable",
+  "namespace": null,
+  "baseClass": "Workable",
+  "interfaces": [],
+  "summary": "这是一个可消毒的组件，继承自Workable，用于在《缺氧》游戏中表示可以被小人消毒的物体。它定义了消毒过程的各个方面，包括工作时间、消毒速度、疾病移除以及与小人工作系统的交互。  该组件使用状态机管理消毒过程，并与游戏中的疾病系统、小人状态系统和任务系统集成。",
+  "keyMethods": [
+    {
+      "methodName": "OnPrefabInit",
+      "summary": "在预制件初始化时调用。设置工作偏移表、动画同步、工作状态项目、属性转换器、经验值、技能组和多工具上下文。订阅取消消毒事件。",
+      "parameters": []
+    },
+    {
+      "methodName": "OnSpawn",
+      "summary": "在游戏对象生成时调用。如果标记为需要消毒，则调用MarkForDisinfect方法。设置工作时间并初始化疾病转移标志。",
+      "parameters": []
+    },
+    {
+      "methodName": "OnStartWork",
+      "summary": "在小人开始工作时调用。计算每秒消毒的疾病数量。",
+      "parameters": [
+        {
+          "name": "worker",
+          "type": "WorkerBase",
+          "description": "正在工作的Duplicant。"
+        }
+      ]
+    },
+    {
+      "methodName": "OnWorkTick",
+      "summary": "在每次工作周期时调用。根据每秒消毒的疾病数量移除疾病。",
+      "parameters": [
+        {
+          "name": "worker",
+          "type": "WorkerBase",
+          "description": "正在工作的Duplicant。"
+        },
+        {
+          "name": "dt",
+          "type": "float",
+          "description": "时间增量。"
+        }
+      ],
+      "return": {
+        "type": "bool",
+        "description": "指示工作是否完成。"
+      }
+    },
+    {
+      "methodName": "OnCompleteWork",
+      "summary": "在工作完成后调用。移除所有疾病，移除“需要消毒”状态项，重置标志，并刷新用户菜单。",
+      "parameters": [
+        {
+          "name": "worker",
+          "type": "WorkerBase",
+          "description": "完成工作的Duplicant。"
+        }
+      ]
+    },
+    {
+      "methodName": "ToggleMarkForDisinfect",
+      "summary": "切换消毒标记。如果已标记，则取消消毒；否则，标记为需要消毒。",
+      "parameters": []
+    },
+    {
+      "methodName": "CancelDisinfection",
+      "summary": "取消消毒过程。移除优先级引用，隐藏进度条，重置标记，取消任务，并移除状态项。",
+      "parameters": []
+    },
+    {
+      "methodName": "MarkForDisinfect",
+      "summary": "标记为需要消毒。创建消毒任务并添加“需要消毒”状态项。",
+      "parameters": [
+        {
+          "name": "force",
+          "type": "bool",
+          "description": "是否强制标记，即使已经标记。"
+        }
+      ]
+    },
+    {
+      "methodName": "OnCancel",
+      "summary": "处理取消消毒事件。",
+      "parameters": [
+        {
+          "name": "data",
+          "type": "object",
+          "description": "事件数据。"
+        }
+      ]
+    }
+  ],
+  "keyProperties": [
+    {
+      "propertyName": "chore",
+      "type": "Chore",
+      "summary": "与该消毒任务关联的工作任务。"
+    },
+    {
+      "propertyName": "isMarkedForDisinfect",
+      "type": "bool",
+      "summary": "指示该物体是否标记为需要消毒。"
+    },
+    {
+      "propertyName": "diseasePerSecond",
+      "type": "float",
+      "summary": "每秒移除的疾病数量。"
+    },
+    {
+      "propertyName": "OnCancelDelegate",
+      "type": "EventSystem.IntraObjectHandler<Disinfectable>",
+      "summary": "取消消毒事件的委托。"
+    }
+  ]
+}

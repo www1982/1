@@ -1,0 +1,68 @@
+{
+  "className": "DeepFriedNoshConfig",
+  "namespace": null,
+  "baseClass": null,
+  "interfaces": [
+    "IEntityConfig",
+    "IHasDlcRestrictions"
+  ],
+  "summary": "This class configures the \"DeepFriedNosh\" food item in Oxygen Not Included. It inherits from `IEntityConfig` and `IHasDlcRestrictions`, indicating it's a configurable entity requiring DLC management. The class defines the creation and initialization of the DeepFriedNosh prefab, specifying its name, description, animation, collision shape, and other relevant attributes.  It also includes a `recipe` which is likely used to define how this food item is created. This suggests it's a mod-added food item, likely part of DLC2, considering its use of `DlcManager.DLC2`.",
+  "keyMethods": [
+    {
+      "name": "GetRequiredDlcIds",
+      "description": "Returns an array of DLC IDs required for this entity.  In this case, it specifies DLC2, meaning the DeepFriedNosh is only available if DLC2 is enabled.",
+      "parameters": [],
+      "return": "string[]"
+    },
+    {
+      "name": "GetForbiddenDlcIds",
+      "description": "Returns an array of DLC IDs that prevent this entity from existing.  This returns `null`, indicating no DLCs prevent its existence.",
+      "parameters": [],
+      "return": "string[]"
+    },
+    {
+      "name": "CreatePrefab",
+      "description": "Creates and returns the GameObject prefab for the DeepFriedNosh. This method uses `EntityTemplates` to extend a base loose entity with food-specific properties. It sets the name, description, mass, animation, collision, and assigns it to the `FOOD.FOOD_TYPES.DEEP_FRIED_NOSH` type.",
+      "parameters": [],
+      "return": "GameObject"
+    },
+    {
+      "name": "OnPrefabInit",
+      "description": "Called after the prefab is initialized.  This implementation is empty, suggesting no additional initialization is required.",
+      "parameters": [
+        {
+          "name": "inst",
+          "type": "GameObject",
+          "description": "The instantiated GameObject."
+        }
+      ],
+      "return": "void"
+    },
+    {
+      "name": "OnSpawn",
+      "description": "Called when the entity spawns in the game. This implementation is empty, suggesting no additional actions are performed on spawn.",
+      "parameters": [
+        {
+          "name": "inst",
+          "type": "GameObject",
+          "description": "The instantiated GameObject."
+        }
+      ],
+      "return": "void"
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "ID",
+      "description": "A constant string representing the unique identifier for this food item.  Used for internal game identification.",
+      "type": "string",
+      "value": "\"DeepFriedNosh\""
+    },
+    {
+      "name": "recipe",
+      "description": "A `ComplexRecipe` object (presumably defined elsewhere), which details the ingredients and process to create the DeepFriedNosh.",
+      "type": "ComplexRecipe",
+      "isStatic": true
+    }
+  ]
+}

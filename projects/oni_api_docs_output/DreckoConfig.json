@@ -1,0 +1,145 @@
+{
+  "className": "DreckoConfig",
+  "namespace": "",
+  "baseClass": "IEntityConfig",
+  "interfaces": [
+    "IEntityConfig",
+    "IHasDlcRestrictions"
+  ],
+  "summary": "配置类，用于定义游戏中的一种名为'Drecko'(壁虎)的生物。它继承自IEntityConfig接口，并实现了创建壁虎及其蛋的逻辑，包括定义其饮食、属性、生长机制等。该类大量使用了来自DreckoTuning的配置参数，以及其他类如BaseDreckoConfig, EntityTemplates, Db, CreatureCalorieMonitor, SolidConsumerMonitor, ScaleGrowthMonitor等提供的功能。",
+  "keyMethods": [
+    {
+      "name": "CreateDrecko",
+      "description": "创建一个壁虎游戏对象。该方法接收壁虎的ID、名称、描述、动画文件以及是否是幼体作为参数，并使用BaseDreckoConfig.BaseDrecko方法创建基础壁虎对象。随后，它扩展壁虎到野生生物，并设置其属性（例如，卡路里、生命值、年龄），以及饮食偏好（包含香料藤、沼泽百合和基础单收获植物）。最后，它设置了壁虎的卡路里监控器、固体消耗监控器和生长监控器。",
+      "parameters": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "壁虎的ID。"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "壁虎的名称。"
+        },
+        {
+          "name": "desc",
+          "type": "string",
+          "description": "壁虎的描述。"
+        },
+        {
+          "name": "anim_file",
+          "type": "string",
+          "description": "壁虎的动画文件。"
+        },
+        {
+          "name": "is_baby",
+          "type": "bool",
+          "description": "指示该壁虎是否是幼体。"
+        }
+      ],
+      "returnType": "GameObject",
+      "notes": "这是创建壁虎的核心方法，整合了多个子系统的配置。"
+    },
+    {
+      "name": "CreatePrefab",
+      "description": "创建壁虎的预制体，包括成年壁虎和它的蛋。它调用CreateDrecko方法创建壁虎，然后使用EntityTemplates.ExtendEntityToFertileCreature将其扩展到可繁殖的生物，并设置蛋的相关属性。",
+      "parameters": [],
+      "returnType": "GameObject",
+      "notes": "用于在游戏中生成壁虎及其蛋。"
+    },
+    {
+      "name": "OnPrefabInit",
+      "description": "预制体初始化方法，目前为空，可用于扩展功能。",
+      "parameters": [
+        {
+          "name": "prefab",
+          "type": "GameObject",
+          "description": "壁虎的预制体。"
+        }
+      ],
+      "returnType": "void",
+      "notes": "遵循Unity生命周期方法。"
+    },
+    {
+      "name": "OnSpawn",
+      "description": "壁虎生成时调用的方法，目前为空，可用于扩展功能。",
+      "parameters": [
+        {
+          "name": "inst",
+          "type": "GameObject",
+          "description": "壁虎的实例。"
+        }
+      ],
+      "returnType": "void",
+      "notes": "遵循Unity生命周期方法。"
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "ID",
+      "type": "string",
+      "description": "壁虎的唯一标识符。"
+    },
+    {
+      "name": "BASE_TRAIT_ID",
+      "type": "string",
+      "description": "壁虎的基础特性ID。"
+    },
+    {
+      "name": "EGG_ID",
+      "type": "string",
+      "description": "壁虎蛋的ID。"
+    },
+    {
+      "name": "POOP_ELEMENT",
+      "type": "Tag",
+      "description": "壁虎排泄物的元素类型，磷矿石。"
+    },
+    {
+      "name": "EMIT_ELEMENT",
+      "type": "Tag",
+      "description": "壁虎剪毛后掉落的物品，基础织物。"
+    },
+    {
+      "name": "DAYS_PLANT_GROWTH_EATEN_PER_CYCLE",
+      "type": "float",
+      "description": "每个循环周期内壁虎消耗的植物生长天数。"
+    },
+    {
+      "name": "CALORIES_PER_DAY_OF_PLANT_EATEN",
+      "type": "float",
+      "description": "壁虎每天从植物中摄取的卡路里。"
+    },
+    {
+      "name": "KG_POOP_PER_DAY_OF_PLANT",
+      "type": "float",
+      "description": "壁虎每天排泄的粪便重量(kg)。"
+    },
+    {
+      "name": "MIN_POOP_SIZE_IN_KG",
+      "type": "float",
+      "description": "壁虎排便的最小重量(kg)。"
+    },
+    {
+      "name": "MIN_POOP_SIZE_IN_CALORIES",
+      "type": "float",
+      "description": "壁虎排便的最小卡路里。"
+    },
+    {
+      "name": "SCALE_GROWTH_TIME_IN_CYCLES",
+      "type": "float",
+      "description": "壁虎鳞片生长所需的循环周期数。"
+    },
+    {
+      "name": "FIBER_PER_CYCLE",
+      "type": "float",
+      "description": "每个循环周期壁虎产生的纤维量。"
+    },
+    {
+      "name": "EGG_SORT_ORDER",
+      "type": "int",
+      "description": "壁虎蛋的排序顺序。"
+    }
+  ]
+}

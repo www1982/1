@@ -1,0 +1,9 @@
+{
+  "className": "MySmiGet",
+  "namespace": null,
+  "baseClass": "Attribute",
+  "interfaces": [],
+  "summary": "这是一个自定义特性 (Attribute)，名为 `MySmiGet`。在Oxygen Not Included的Modding环境中，它很可能被用来标记类、方法或属性，以便于Mod作者编写的工具或系统识别和处理。  由于没有更多上下文信息，其具体用途难以确定，但它很可能与一个名为'SMI'的内部系统或框架有关，或许用于数据序列化、反射或其他Mod相关的操作。  这需要结合其使用场景才能更准确地理解其作用。  在缺氧的Modding中，自定义特性经常被用来扩展游戏的功能，并通过反射机制访问和修改游戏数据。",
+  "keyMethods": [],
+  "keyProperties": []
+}

@@ -1,0 +1,22 @@
+{
+  "className": "Workaholic",
+  "namespace": null,
+  "baseClass": "StateMachineComponent<Workaholic.StatesInstance>",
+  "interfaces": [],
+  "summary": "这是一个用于管理小人（Duplicant）工作狂状态的组件。它使用`GameStateMachine`来定义小人的两种状态：满足（satisfied）和痛苦（suffering）。当小人空闲时，它会切换到痛苦状态，并表现出不安的情绪。此组件依赖于`ChoreDriver`来检测小人的当前任务。  `[SkipSaveFileSerialization]`属性表明此组件的数据不会保存到存档文件中。",
+  "keyMethods": [
+    {
+      "methodName": "OnSpawn",
+      "summary": "在组件实例化后调用，用于启动状态机。",
+      "parameters": [],
+      "returnType": "void"
+    },
+    {
+      "methodName": "IsUncomfortable",
+      "summary": "检查小人是否处于不舒适状态（即空闲状态）。通过检查`ChoreDriver`获取当前任务是否为`IdleChore`来判断。",
+      "parameters": [],
+      "returnType": "bool"
+    }
+  ],
+  "keyProperties": []
+}

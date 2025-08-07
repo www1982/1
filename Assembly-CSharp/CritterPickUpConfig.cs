@@ -1,0 +1,61 @@
+﻿using System;
+using System.Collections.Generic;
+using STRINGS;
+using TUNING;
+using UnityEngine;
+
+// Token: 0x02000067 RID: 103
+public class CritterPickUpConfig : IBuildingConfig
+{
+	// Token: 0x060001EB RID: 491 RVA: 0x0000DF8C File Offset: 0x0000C18C
+	public override BuildingDef CreateBuildingDef()
+	{
+		BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef("CritterPickUp", 1, 3, "relocator_pickup_kanim", 10, 10f, global::TUNING.BUILDINGS.CONSTRUCTION_MASS_KG.TIER1, MATERIALS.RAW_METALS, 1600f, BuildLocationRule.OnFloor, global::TUNING.BUILDINGS.DECOR.PENALTY.TIER2, NOISE_POLLUTION.NOISY.TIER0, 0.2f);
+		buildingDef.AudioCategory = "Metal";
+		buildingDef.ViewMode = OverlayModes.Rooms.ID;
+		buildingDef.LogicInputPorts = new List<LogicPorts.Port> { LogicPorts.Port.InputPort("CritterPickUpInput", new CellOffset(0, 0), global::STRINGS.BUILDINGS.PREFABS.CRITTERPICKUP.LOGIC_INPUT.DESC, global::STRINGS.BUILDINGS.PREFABS.CRITTERPICKUP.LOGIC_INPUT.LOGIC_PORT_ACTIVE, global::STRINGS.BUILDINGS.PREFABS.CRITTERPICKUP.LOGIC_INPUT.LOGIC_PORT_INACTIVE, false, false) };
+		buildingDef.AddSearchTerms(SEARCH_TERMS.CRITTER);
+		buildingDef.AddSearchTerms(SEARCH_TERMS.RANCHING);
+		return buildingDef;
+	}
+
+	// Token: 0x060001EC RID: 492 RVA: 0x0000E050 File Offset: 0x0000C250
+	public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
+	{
+		go.GetComponent<KPrefabID>().AddTag(GameTags.CodexCategories.CreatureRelocator, false);
+		Storage storage = go.AddOrGet<Storage>();
+		storage.allowItemRemoval = false;
+		storage.showDescriptor = true;
+		storage.storageFilters = STORAGEFILTERS.BAGABLE_CREATURES;
+		storage.workAnims = new HashedString[] { "place", "release" };
+		storage.overrideAnims = new KAnimFile[] { Assets.GetAnim("anim_restrain_creature_kanim") };
+		storage.workAnimPlayMode = KAnim.PlayMode.Once;
+		storage.synchronizeAnims = false;
+		storage.useGunForDelivery = false;
+		storage.allowSettingOnlyFetchMarkedItems = false;
+		go.AddOrGet<TreeFilterable>();
+		go.AddOrGet<BaggableCritterCapacityTracker>().filteredCount = true;
+		Prioritizable.AddRef(go);
+	}
+
+	// Token: 0x060001ED RID: 493 RVA: 0x0000E10F File Offset: 0x0000C30F
+	public override void DoPostConfigureComplete(GameObject go)
+	{
+		FixedCapturePoint.Def def = go.AddOrGetDef<FixedCapturePoint.Def>();
+		def.isAmountStoredOverCapacity = delegate(FixedCapturePoint.Instance smi, FixedCapturableMonitor.Instance capturable)
+		{
+			TreeFilterable component = smi.GetComponent<TreeFilterable>();
+			IUserControlledCapacity component2 = smi.GetComponent<IUserControlledCapacity>();
+			float amountStored = component2.AmountStored;
+			float userMaxCapacity = component2.UserMaxCapacity;
+			return amountStored > userMaxCapacity && component.ContainsTag(capturable.PrefabTag);
+		};
+		def.allowBabies = true;
+	}
+
+	// Token: 0x04000130 RID: 304
+	public const string ID = "CritterPickUp";
+
+	// Token: 0x04000131 RID: 305
+	public const string INPUT_PORT = "CritterPickUpInput";
+}

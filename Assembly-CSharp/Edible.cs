@@ -1,0 +1,563 @@
+﻿using System;
+using System.Collections.Generic;
+using Klei.AI;
+using KSerialization;
+using STRINGS;
+using TUNING;
+using UnityEngine;
+
+// Token: 0x020005AE RID: 1454
+[AddComponentMenu("KMonoBehaviour/Workable/Edible")]
+public class Edible : Workable, IGameObjectEffectDescriptor, ISaveLoadable, IExtendSplitting
+{
+	// Token: 0x1700014B RID: 331
+	// (get) Token: 0x06002168 RID: 8552 RVA: 0x000C0F59 File Offset: 0x000BF159
+	// (set) Token: 0x06002169 RID: 8553 RVA: 0x000C0F66 File Offset: 0x000BF166
+	public float Units
+	{
+		get
+		{
+			return this.primaryElement.Units;
+		}
+		set
+		{
+			this.primaryElement.Units = value;
+		}
+	}
+
+	// Token: 0x1700014C RID: 332
+	// (get) Token: 0x0600216A RID: 8554 RVA: 0x000C0F74 File Offset: 0x000BF174
+	public float MassPerUnit
+	{
+		get
+		{
+			return this.primaryElement.MassPerUnit;
+		}
+	}
+
+	// Token: 0x1700014D RID: 333
+	// (get) Token: 0x0600216B RID: 8555 RVA: 0x000C0F81 File Offset: 0x000BF181
+	// (set) Token: 0x0600216C RID: 8556 RVA: 0x000C0F95 File Offset: 0x000BF195
+	public float Calories
+	{
+		get
+		{
+			return this.Units * this.foodInfo.CaloriesPerUnit;
+		}
+		set
+		{
+			this.Units = value / this.foodInfo.CaloriesPerUnit;
+		}
+	}
+
+	// Token: 0x1700014E RID: 334
+	// (get) Token: 0x0600216D RID: 8557 RVA: 0x000C0FAA File Offset: 0x000BF1AA
+	// (set) Token: 0x0600216E RID: 8558 RVA: 0x000C0FB2 File Offset: 0x000BF1B2
+	public EdiblesManager.FoodInfo FoodInfo
+	{
+		get
+		{
+			return this.foodInfo;
+		}
+		set
+		{
+			this.foodInfo = value;
+			this.FoodID = this.foodInfo.Id;
+		}
+	}
+
+	// Token: 0x1700014F RID: 335
+	// (get) Token: 0x0600216F RID: 8559 RVA: 0x000C0FCC File Offset: 0x000BF1CC
+	// (set) Token: 0x06002170 RID: 8560 RVA: 0x000C0FD4 File Offset: 0x000BF1D4
+	public bool isBeingConsumed { get; private set; }
+
+	// Token: 0x17000150 RID: 336
+	// (get) Token: 0x06002171 RID: 8561 RVA: 0x000C0FDD File Offset: 0x000BF1DD
+	public List<SpiceInstance> Spices
+	{
+		get
+		{
+			return this.spices;
+		}
+	}
+
+	// Token: 0x06002172 RID: 8562 RVA: 0x000C0FE8 File Offset: 0x000BF1E8
+	protected override void OnPrefabInit()
+	{
+		this.primaryElement = base.GetComponent<PrimaryElement>();
+		base.SetReportType(ReportManager.ReportType.PersonalTime);
+		this.showProgressBar = false;
+		base.SetOffsetTable(OffsetGroups.InvertedStandardTable);
+		this.shouldTransferDiseaseWithWorker = false;
+		base.OnPrefabInit();
+		if (this.foodInfo == null)
+		{
+			if (this.FoodID == null)
+			{
+				global::Debug.LogError("No food FoodID");
+			}
+			this.foodInfo = EdiblesManager.GetFoodInfo(this.FoodID);
+		}
+		base.Subscribe<Edible>(748399584, Edible.OnCraftDelegate);
+		base.Subscribe<Edible>(1272413801, Edible.OnCraftDelegate);
+		this.workerStatusItem = Db.Get().DuplicantStatusItems.Eating;
+		this.synchronizeAnims = false;
+		Components.Edibles.Add(this);
+	}
+
+	// Token: 0x06002173 RID: 8563 RVA: 0x000C109C File Offset: 0x000BF29C
+	protected override void OnSpawn()
+	{
+		base.OnSpawn();
+		this.ToggleGenericSpicedTag(base.gameObject.HasTag(GameTags.SpicedFood));
+		if (this.spices != null)
+		{
+			for (int i = 0; i < this.spices.Count; i++)
+			{
+				this.ApplySpiceEffects(this.spices[i], SpiceGrinderConfig.SpicedStatus);
+			}
+		}
+		if (base.GetComponent<KPrefabID>().HasTag(GameTags.Rehydrated))
+		{
+			base.GetComponent<KSelectable>().AddStatusItem(Db.Get().MiscStatusItems.RehydratedFood, null);
+		}
+		base.GetComponent<KSelectable>().SetStatusItem(Db.Get().StatusItemCategories.Main, Db.Get().MiscStatusItems.Edible, this);
+	}
+
+	// Token: 0x06002174 RID: 8564 RVA: 0x000C1154 File Offset: 0x000BF354
+	public override HashedString[] GetWorkAnims(WorkerBase worker)
+	{
+		EatChore.StatesInstance smi = worker.GetSMI<EatChore.StatesInstance>();
+		bool flag = smi != null && smi.UseSalt();
+		MinionResume component = worker.GetComponent<MinionResume>();
+		if (component != null && component.CurrentHat != null)
+		{
+			if (!flag)
+			{
+				return Edible.hatWorkAnims;
+			}
+			return Edible.saltHatWorkAnims;
+		}
+		else
+		{
+			if (!flag)
+			{
+				return Edible.normalWorkAnims;
+			}
+			return Edible.saltWorkAnims;
+		}
+	}
+
+	// Token: 0x06002175 RID: 8565 RVA: 0x000C11AC File Offset: 0x000BF3AC
+	public override HashedString[] GetWorkPstAnims(WorkerBase worker, bool successfully_completed)
+	{
+		EatChore.StatesInstance smi = worker.GetSMI<EatChore.StatesInstance>();
+		bool flag = smi != null && smi.UseSalt();
+		MinionResume component = worker.GetComponent<MinionResume>();
+		if (component != null && component.CurrentHat != null)
+		{
+			if (!flag)
+			{
+				return Edible.hatWorkPstAnim;
+			}
+			return Edible.saltHatWorkPstAnim;
+		}
+		else
+		{
+			if (!flag)
+			{
+				return Edible.normalWorkPstAnim;
+			}
+			return Edible.saltWorkPstAnim;
+		}
+	}
+
+	// Token: 0x06002176 RID: 8566 RVA: 0x000C1202 File Offset: 0x000BF402
+	private void OnCraft(object data)
+	{
+		WorldResourceAmountTracker<RationTracker>.Get().RegisterAmountProduced(this.Calories);
+	}
+
+	// Token: 0x06002177 RID: 8567 RVA: 0x000C1214 File Offset: 0x000BF414
+	public float GetFeedingTime(WorkerBase worker)
+	{
+		float num = this.Calories * 2E-05f;
+		if (worker != null)
+		{
+			BingeEatChore.StatesInstance smi = worker.GetSMI<BingeEatChore.StatesInstance>();
+			if (smi != null && smi.IsBingeEating())
+			{
+				num /= 2f;
+			}
+		}
+		return num;
+	}
+
+	// Token: 0x06002178 RID: 8568 RVA: 0x000C1254 File Offset: 0x000BF454
+	protected override void OnStartWork(WorkerBase worker)
+	{
+		this.totalFeedingTime = this.GetFeedingTime(worker);
+		base.SetWorkTime(this.totalFeedingTime);
+		this.caloriesConsumed = 0f;
+		this.unitsConsumed = 0f;
+		this.totalUnits = this.Units;
+		worker.GetComponent<KPrefabID>().AddTag(GameTags.AlwaysConverse, false);
+		this.totalConsumableCalories = this.Units * this.foodInfo.CaloriesPerUnit;
+		this.StartConsuming();
+	}
+
+	// Token: 0x06002179 RID: 8569 RVA: 0x000C12CC File Offset: 0x000BF4CC
+	protected override bool OnWorkTick(WorkerBase worker, float dt)
+	{
+		if (this.currentlyLit)
+		{
+			if (this.currentModifier != this.caloriesLitSpaceModifier)
+			{
+				worker.GetAttributes().Remove(this.currentModifier);
+				worker.GetAttributes().Add(this.caloriesLitSpaceModifier);
+				this.currentModifier = this.caloriesLitSpaceModifier;
+			}
+		}
+		else if (this.currentModifier != this.caloriesModifier)
+		{
+			worker.GetAttributes().Remove(this.currentModifier);
+			worker.GetAttributes().Add(this.caloriesModifier);
+			this.currentModifier = this.caloriesModifier;
+		}
+		return this.OnTickConsume(worker, dt);
+	}
+
+	// Token: 0x0600217A RID: 8570 RVA: 0x000C1363 File Offset: 0x000BF563
+	protected override void OnStopWork(WorkerBase worker)
+	{
+		if (this.currentModifier != null)
+		{
+			worker.GetAttributes().Remove(this.currentModifier);
+			this.currentModifier = null;
+		}
+		worker.GetComponent<KPrefabID>().RemoveTag(GameTags.AlwaysConverse);
+		this.StopConsuming(worker);
+	}
+
+	// Token: 0x0600217B RID: 8571 RVA: 0x000C139C File Offset: 0x000BF59C
+	private bool OnTickConsume(WorkerBase worker, float dt)
+	{
+		if (!this.isBeingConsumed)
+		{
+			DebugUtil.DevLogError("OnTickConsume while we're not eating, this would set a NaN mass on this Edible");
+			return true;
+		}
+		bool flag = false;
+		float num = dt / this.totalFeedingTime;
+		float num2 = num * this.totalConsumableCalories;
+		if (this.caloriesConsumed + num2 > this.totalConsumableCalories)
+		{
+			num2 = this.totalConsumableCalories - this.caloriesConsumed;
+		}
+		this.caloriesConsumed += num2;
+		worker.GetAmounts().Get("Calories").value += num2;
+		float num3 = this.totalUnits * num;
+		if (this.Units - num3 < 0f)
+		{
+			num3 = this.Units;
+		}
+		this.Units -= num3;
+		this.unitsConsumed += num3;
+		if (this.Units <= 0f)
+		{
+			flag = true;
+		}
+		return flag;
+	}
+
+	// Token: 0x0600217C RID: 8572 RVA: 0x000C1465 File Offset: 0x000BF665
+	public void SpiceEdible(SpiceInstance spice, StatusItem status)
+	{
+		this.spices.Add(spice);
+		this.ApplySpiceEffects(spice, status);
+	}
+
+	// Token: 0x0600217D RID: 8573 RVA: 0x000C147C File Offset: 0x000BF67C
+	protected virtual void ApplySpiceEffects(SpiceInstance spice, StatusItem status)
+	{
+		base.GetComponent<KPrefabID>().AddTag(spice.Id, true);
+		this.ToggleGenericSpicedTag(true);
+		base.GetComponent<KSelectable>().AddStatusItem(status, this.spices);
+		if (spice.FoodModifier != null)
+		{
+			base.gameObject.GetAttributes().Add(spice.FoodModifier);
+		}
+		if (spice.CalorieModifier != null)
+		{
+			this.Calories += spice.CalorieModifier.Value;
+		}
+	}
+
+	// Token: 0x0600217E RID: 8574 RVA: 0x000C14F8 File Offset: 0x000BF6F8
+	private void ToggleGenericSpicedTag(bool isSpiced)
+	{
+		KPrefabID component = base.GetComponent<KPrefabID>();
+		if (isSpiced)
+		{
+			component.RemoveTag(GameTags.UnspicedFood);
+			component.AddTag(GameTags.SpicedFood, true);
+			return;
+		}
+		component.RemoveTag(GameTags.SpicedFood);
+		component.AddTag(GameTags.UnspicedFood, false);
+	}
+
+	// Token: 0x0600217F RID: 8575 RVA: 0x000C1540 File Offset: 0x000BF740
+	public bool CanAbsorb(Edible other)
+	{
+		bool flag = this.spices.Count == other.spices.Count;
+		flag &= base.gameObject.HasTag(GameTags.Rehydrated) == other.gameObject.HasTag(GameTags.Rehydrated);
+		flag &= !base.gameObject.HasTag(GameTags.Dehydrated) && !other.gameObject.HasTag(GameTags.Dehydrated);
+		int num = 0;
+		while (flag && num < this.spices.Count)
+		{
+			int num2 = 0;
+			while (flag && num2 < other.spices.Count)
+			{
+				flag = this.spices[num].Id == other.spices[num2].Id;
+				num2++;
+			}
+			num++;
+		}
+		return flag;
+	}
+
+	// Token: 0x06002180 RID: 8576 RVA: 0x000C1611 File Offset: 0x000BF811
+	private void StartConsuming()
+	{
+		DebugUtil.DevAssert(!this.isBeingConsumed, "Can't StartConsuming()...we've already started", null);
+		this.isBeingConsumed = true;
+		base.worker.Trigger(1406130139, this);
+	}
+
+	// Token: 0x06002181 RID: 8577 RVA: 0x000C1640 File Offset: 0x000BF840
+	private void StopConsuming(WorkerBase worker)
+	{
+		DebugUtil.DevAssert(this.isBeingConsumed, "StopConsuming() called without StartConsuming()", null);
+		this.isBeingConsumed = false;
+		for (int i = 0; i < this.foodInfo.Effects.Count; i++)
+		{
+			worker.GetComponent<Effects>().Add(this.foodInfo.Effects[i], true);
+		}
+		ReportManager.Instance.ReportValue(ReportManager.ReportType.CaloriesCreated, -this.caloriesConsumed, StringFormatter.Replace(UI.ENDOFDAYREPORT.NOTES.EATEN, "{0}", this.GetProperName()), worker.GetProperName());
+		this.AddOnConsumeEffects(worker);
+		worker.Trigger(1121894420, this);
+		base.Trigger(-10536414, worker.gameObject);
+		this.unitsConsumed = float.NaN;
+		this.caloriesConsumed = float.NaN;
+		this.totalUnits = float.NaN;
+		if (this.Units < 0.001f)
+		{
+			base.gameObject.DeleteObject();
+		}
+	}
+
+	// Token: 0x06002182 RID: 8578 RVA: 0x000C172D File Offset: 0x000BF92D
+	public static string GetEffectForFoodQuality(int qualityLevel)
+	{
+		qualityLevel = Mathf.Clamp(qualityLevel, -1, 5);
+		return Edible.qualityEffects[qualityLevel];
+	}
+
+	// Token: 0x06002183 RID: 8579 RVA: 0x000C1744 File Offset: 0x000BF944
+	private void AddOnConsumeEffects(WorkerBase worker)
+	{
+		int num = Mathf.RoundToInt(worker.GetAttributes().Add(Db.Get().Attributes.FoodExpectation).GetTotalValue());
+		int num2 = this.FoodInfo.Quality + num;
+		Effects component = worker.GetComponent<Effects>();
+		component.Add(Edible.GetEffectForFoodQuality(num2), true);
+		for (int i = 0; i < this.spices.Count; i++)
+		{
+			Effect statBonus = this.spices[i].StatBonus;
+			if (statBonus != null)
+			{
+				float duration = statBonus.duration;
+				statBonus.duration = this.caloriesConsumed * 0.001f / 1000f * 600f;
+				component.Add(statBonus, true);
+				statBonus.duration = duration;
+			}
+		}
+		if (base.gameObject.HasTag(GameTags.Rehydrated))
+		{
+			component.Add(FoodRehydratorConfig.RehydrationEffect, true);
+		}
+	}
+
+	// Token: 0x06002184 RID: 8580 RVA: 0x000C1824 File Offset: 0x000BFA24
+	protected override void OnCleanUp()
+	{
+		base.OnCleanUp();
+		Components.Edibles.Remove(this);
+	}
+
+	// Token: 0x06002185 RID: 8581 RVA: 0x000C1837 File Offset: 0x000BFA37
+	public int GetQuality()
+	{
+		return this.foodInfo.Quality;
+	}
+
+	// Token: 0x06002186 RID: 8582 RVA: 0x000C1844 File Offset: 0x000BFA44
+	public int GetMorale()
+	{
+		int num = 0;
+		string effectForFoodQuality = Edible.GetEffectForFoodQuality(this.foodInfo.Quality);
+		foreach (AttributeModifier attributeModifier in Db.Get().effects.Get(effectForFoodQuality).SelfModifiers)
+		{
+			if (attributeModifier.AttributeId == Db.Get().Attributes.QualityOfLife.Id)
+			{
+				num += Mathf.RoundToInt(attributeModifier.Value);
+			}
+		}
+		return num;
+	}
+
+	// Token: 0x06002187 RID: 8583 RVA: 0x000C18E4 File Offset: 0x000BFAE4
+	public override List<Descriptor> GetDescriptors(GameObject go)
+	{
+		List<Descriptor> list = new List<Descriptor>();
+		list.Add(new Descriptor(string.Format(UI.GAMEOBJECTEFFECTS.CALORIES, GameUtil.GetFormattedCalories(this.foodInfo.CaloriesPerUnit, GameUtil.TimeSlice.None, true)), string.Format(UI.GAMEOBJECTEFFECTS.TOOLTIPS.CALORIES, GameUtil.GetFormattedCalories(this.foodInfo.CaloriesPerUnit, GameUtil.TimeSlice.None, true)), Descriptor.DescriptorType.Information, false));
+		list.Add(new Descriptor(string.Format(UI.GAMEOBJECTEFFECTS.FOOD_QUALITY, GameUtil.GetFormattedFoodQuality(this.foodInfo.Quality)), string.Format(UI.GAMEOBJECTEFFECTS.TOOLTIPS.FOOD_QUALITY, GameUtil.GetFormattedFoodQuality(this.foodInfo.Quality)), Descriptor.DescriptorType.Effect, false));
+		int morale = this.GetMorale();
+		list.Add(new Descriptor(string.Format(UI.GAMEOBJECTEFFECTS.FOOD_MORALE, GameUtil.AddPositiveSign(morale.ToString(), morale > 0)), string.Format(UI.GAMEOBJECTEFFECTS.TOOLTIPS.FOOD_MORALE, GameUtil.AddPositiveSign(morale.ToString(), morale > 0)), Descriptor.DescriptorType.Effect, false));
+		foreach (string text in this.foodInfo.Effects)
+		{
+			string text2 = "";
+			foreach (AttributeModifier attributeModifier in Db.Get().effects.Get(text).SelfModifiers)
+			{
+				text2 = string.Concat(new string[]
+				{
+					text2,
+					"\n    • ",
+					Strings.Get("STRINGS.DUPLICANTS.ATTRIBUTES." + attributeModifier.AttributeId.ToUpper() + ".NAME"),
+					": ",
+					attributeModifier.GetFormattedString()
+				});
+			}
+			list.Add(new Descriptor(Strings.Get("STRINGS.DUPLICANTS.MODIFIERS." + text.ToUpper() + ".NAME"), Strings.Get("STRINGS.DUPLICANTS.MODIFIERS." + text.ToUpper() + ".DESCRIPTION") + text2, Descriptor.DescriptorType.Effect, false));
+		}
+		return list;
+	}
+
+	// Token: 0x06002188 RID: 8584 RVA: 0x000C1B40 File Offset: 0x000BFD40
+	public void ApplySpicesToOtherEdible(Edible other)
+	{
+		if (this.spices != null && other != null)
+		{
+			for (int i = 0; i < this.spices.Count; i++)
+			{
+				other.SpiceEdible(this.spices[i], SpiceGrinderConfig.SpicedStatus);
+			}
+		}
+	}
+
+	// Token: 0x06002189 RID: 8585 RVA: 0x000C1B8C File Offset: 0x000BFD8C
+	public void OnSplitTick(Pickupable thePieceTaken)
+	{
+		Edible component = thePieceTaken.GetComponent<Edible>();
+		this.ApplySpicesToOtherEdible(component);
+		if (base.GetComponent<KPrefabID>().HasTag(GameTags.Rehydrated))
+		{
+			component.AddTag(GameTags.Rehydrated);
+		}
+	}
+
+	// Token: 0x04001374 RID: 4980
+	private PrimaryElement primaryElement;
+
+	// Token: 0x04001375 RID: 4981
+	public string FoodID;
+
+	// Token: 0x04001376 RID: 4982
+	private EdiblesManager.FoodInfo foodInfo;
+
+	// Token: 0x04001378 RID: 4984
+	public float unitsConsumed = float.NaN;
+
+	// Token: 0x04001379 RID: 4985
+	public float caloriesConsumed = float.NaN;
+
+	// Token: 0x0400137A RID: 4986
+	private float totalFeedingTime = float.NaN;
+
+	// Token: 0x0400137B RID: 4987
+	private float totalUnits = float.NaN;
+
+	// Token: 0x0400137C RID: 4988
+	private float totalConsumableCalories = float.NaN;
+
+	// Token: 0x0400137D RID: 4989
+	[Serialize]
+	private List<SpiceInstance> spices = new List<SpiceInstance>();
+
+	// Token: 0x0400137E RID: 4990
+	private AttributeModifier caloriesModifier = new AttributeModifier("CaloriesDelta", 50000f, DUPLICANTS.MODIFIERS.EATINGCALORIES.NAME, false, true, true);
+
+	// Token: 0x0400137F RID: 4991
+	private AttributeModifier caloriesLitSpaceModifier = new AttributeModifier("CaloriesDelta", (1f + DUPLICANTSTATS.STANDARD.Light.LIGHT_WORK_EFFICIENCY_BONUS) / 2E-05f, DUPLICANTS.MODIFIERS.EATINGCALORIES.NAME, false, true, true);
+
+	// Token: 0x04001380 RID: 4992
+	private AttributeModifier currentModifier;
+
+	// Token: 0x04001381 RID: 4993
+	private static readonly EventSystem.IntraObjectHandler<Edible> OnCraftDelegate = new EventSystem.IntraObjectHandler<Edible>(delegate(Edible component, object data)
+	{
+		component.OnCraft(data);
+	});
+
+	// Token: 0x04001382 RID: 4994
+	private static readonly HashedString[] normalWorkAnims = new HashedString[] { "working_pre", "working_loop" };
+
+	// Token: 0x04001383 RID: 4995
+	private static readonly HashedString[] hatWorkAnims = new HashedString[] { "hat_pre", "working_loop" };
+
+	// Token: 0x04001384 RID: 4996
+	private static readonly HashedString[] saltWorkAnims = new HashedString[] { "salt_pre", "salt_loop" };
+
+	// Token: 0x04001385 RID: 4997
+	private static readonly HashedString[] saltHatWorkAnims = new HashedString[] { "salt_hat_pre", "salt_hat_loop" };
+
+	// Token: 0x04001386 RID: 4998
+	private static readonly HashedString[] normalWorkPstAnim = new HashedString[] { "working_pst" };
+
+	// Token: 0x04001387 RID: 4999
+	private static readonly HashedString[] hatWorkPstAnim = new HashedString[] { "hat_pst" };
+
+	// Token: 0x04001388 RID: 5000
+	private static readonly HashedString[] saltWorkPstAnim = new HashedString[] { "salt_pst" };
+
+	// Token: 0x04001389 RID: 5001
+	private static readonly HashedString[] saltHatWorkPstAnim = new HashedString[] { "salt_hat_pst" };
+
+	// Token: 0x0400138A RID: 5002
+	private static Dictionary<int, string> qualityEffects = new Dictionary<int, string>
+	{
+		{ -1, "EdibleMinus3" },
+		{ 0, "EdibleMinus2" },
+		{ 1, "EdibleMinus1" },
+		{ 2, "Edible0" },
+		{ 3, "Edible1" },
+		{ 4, "Edible2" },
+		{ 5, "Edible3" }
+	};
+
+	// Token: 0x02001445 RID: 5189
+	public class EdibleStartWorkInfo : WorkerBase.StartWorkInfo
+	{
+		// Token: 0x17000997 RID: 2455
+		// (get) Token: 0x06008D0C RID: 36108 RVA: 0x00357731 File Offset: 0x00355931
+		// (set) Token: 0x06008D0D RID: 36109 RVA: 0x00357739 File Offset: 0x00355939
+		public float amount { get; private set; }
+
+		// Token: 0x06008D0E RID: 36110 RVA: 0x00357742 File Offset: 0x00355942
+		public EdibleStartWorkInfo(Workable workable, float amount)
+			: base(workable)
+		{
+			this.amount = amount;
+		}
+	}
+}

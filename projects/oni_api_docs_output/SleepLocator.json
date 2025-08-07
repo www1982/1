@@ -1,0 +1,34 @@
+{
+  "className": "SleepLocator",
+  "namespace": null,
+  "baseClass": "IEntityConfig",
+  "interfaces": [
+    "IEntityConfig"
+  ],
+  "summary": "这是一个用于创建游戏内'睡眠定位器'（Sleep Locator）的配置类。'睡眠定位器'可能是一个允许Duplicant（小人）睡觉但并非传统床铺的建筑或游戏对象。它继承自IEntityConfig接口，这表明它是一个自定义实体的配置类，用于在《缺氧》游戏中添加新的游戏内容。该类实现了创建、初始化和生成SleepLocator实体的必要方法。  它不会影响Duplicant的睡眠质量评分，因为它设置`isNormalBed`为false。",
+  "keyMethods": [
+    {
+      "methodName": "CreatePrefab",
+      "description": "创建SleepLocator的预制体。使用EntityTemplates.CreateEntity创建名为'SleepLocator'的预制体。添加了'NotConversationTopic'标签，这意味着小人不会与其进行对话。添加了一个'Approachable'组件，允许小人与其互动（例如，靠近它）。添加了一个'Sleepable'组件，但将`isNormalBed`设置为false，表示它不是标准床铺，不会影响睡眠质量等标准床铺属性。",
+      "returnType": "UnityEngine.GameObject"
+    },
+    {
+      "methodName": "OnPrefabInit",
+      "description": "预制体初始化方法。当前为空，意味着在预制体初始化阶段没有额外的操作。",
+      "returnType": "void"
+    },
+    {
+      "methodName": "OnSpawn",
+      "description": "实体生成方法。当前为空，意味着在实体生成阶段没有额外的操作。",
+      "returnType": "void"
+    }
+  ],
+  "keyProperties": [
+    {
+      "propertyName": "ID",
+      "description": "SleepLocator的唯一标识符字符串，值为'SleepLocator'。",
+      "type": "string",
+      "isStatic": true
+    }
+  ]
+}

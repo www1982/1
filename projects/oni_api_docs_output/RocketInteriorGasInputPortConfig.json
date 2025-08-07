@@ -1,0 +1,59 @@
+{
+  "className": "RocketInteriorGasInputPortConfig",
+  "namespace": null,
+  "baseClass": "IBuildingConfig",
+  "interfaces": [
+    "IBuildingConfig"
+  ],
+  "summary": "配置火箭内部气体输入端口的建筑配置类。该端口用于火箭内部的气体传输，属于DLC扩展内容。它不可建造、不可摧毁、不可被淹没，并且具有特殊属性，例如始终保持运行状态，忽略基础需求，并具有自定义的碰撞体积和视觉效果。",
+  "keyMethods": [
+    {
+      "name": "GetRequiredDlcIds",
+      "description": "返回该建筑所需的DLC ID，此处为Expansion1。",
+      "returnType": "string[]"
+    },
+    {
+      "name": "CreateBuildingDef",
+      "description": "创建建筑的定义。设定了建筑的ID、尺寸、动画、建造材料、建造规则、噪音污染、装饰度等属性。  特别地，该建筑被设置为不可被淹没、不可摧毁、不可过热，并始终处于运行状态。",
+      "returnType": "BuildingDef"
+    },
+    {
+      "name": "ConfigureBuildingTemplate",
+      "description": "配置建筑模板。该方法设置了建筑的始终运行状态，忽略基础需求，添加了SimCellOccupier（模拟单元占用）和BuildingHP（建筑生命值）组件，并添加了一个容量为1kg的隐藏Storage组件用于气体储存。  还添加了RocketConduitSender组件，用于发送气体，并定义了一个仅接受Unobtanium的AutoStorageDropper。",
+      "returnType": "void"
+    },
+    {
+      "name": "DoPostConfigureComplete",
+      "description": "完成配置后的后续操作。移除循环声音，添加Bunker、FloorTiles和NoRocketRefund标签，设置碰撞体积，添加BuildingCellVisualizer（建筑单元可视化）组件，并禁止拆除建筑。",
+      "returnType": "void"
+    },
+    {
+      "name": "DoPostConfigurePreview",
+      "description": "预览阶段的后续配置。添加BuildingCellVisualizer组件和气体输入端口。",
+      "returnType": "void"
+    },
+    {
+      "name": "DoPostConfigureUnderConstruction",
+      "description": "建筑建造阶段的后续配置。添加BuildingCellVisualizer组件和气体输入端口。",
+      "returnType": "void"
+    },
+    {
+      "name": "AttachPort",
+      "description": "将ConduitSecondaryInput组件添加到GameObject，并设置气体输入端口信息。这是内部辅助方法。",
+      "returnType": "void"
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "ID",
+      "description": "建筑的唯一标识符。",
+      "type": "string",
+      "isConst": true
+    },
+    {
+      "name": "gasInputPort",
+      "description": "气体输入端口信息，定义了端口类型为气体，以及相对于建筑中心的位置偏移。",
+      "type": "ConduitPortInfo"
+    }
+  ]
+}

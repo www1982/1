@@ -1,0 +1,33 @@
+{
+  "className": "EmoteHighPriorityMonitor",
+  "namespace": null,
+  "baseClass": "GameStateMachine<EmoteHighPriorityMonitor, EmoteHighPriorityMonitor.Instance>",
+  "interfaces": [],
+  "summary": "该类是一个状态机，用于管理小人执行高优先级表情（Emote）行为。它继承自GameStateMachine，这意味着它负责跟踪并控制小人执行表情行为的不同状态。  该状态机主要处理小人是否正在执行高优先级表情行为，并在行为结束后进行重置。  这对于确保小人能够及时响应重要事件（例如，紧急情况）至关重要，优先于其他低优先级活动。  `Instance`内部类表示该状态机的实例，用于与游戏中的具体小人实例进行交互。",
+  "keyMethods": [
+    {
+      "methodName": "InitializeStates",
+      "parameters": "[out StateMachine.BaseState default_state]",
+      "description": "初始化状态机。将默认状态设置为`ready`，并将序列化类型设置为`Both_DEPRECATED`。  在`ready`状态下，监听`GameHashes.BeginChore`事件，并在事件触发时调用`OnStartChore`方法。  `resetting`状态将返回`ready`状态。"
+    },
+    {
+      "methodName": "Instance.OnStartChore",
+      "parameters": "[object o]",
+      "description": "当小人开始一个新的行为（Chore）时被调用。  它检查该行为是否满足高优先级表情的需求（`Db.Get().Urges.EmoteHighPriority`）。如果满足，则将状态机切换到`resetting`状态。"
+    }
+  ],
+  "keyProperties": [
+    {
+      "propertyName": "ready",
+      "description": "表示状态机处于准备就绪状态，等待高优先级表情行为。"
+    },
+    {
+      "propertyName": "resetting",
+      "description": "表示状态机正在重置，准备处理下一个高优先级表情行为。"
+    },
+    {
+      "propertyName": "Instance",
+      "description": "嵌套类，表示该状态机在游戏中的具体实例，负责与游戏中的小人实例进行交互。它继承自`GameStateMachine<EmoteHighPriorityMonitor, EmoteHighPriorityMonitor.Instance, IStateMachineTarget, object>.GameInstance`。"
+    }
+  ]
+}

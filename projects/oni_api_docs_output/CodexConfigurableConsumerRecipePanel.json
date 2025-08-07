@@ -1,0 +1,93 @@
+{
+  "className": "CodexConfigurableConsumerRecipePanel",
+  "namespace": null,
+  "baseClass": "CodexWidget<CodexConfigurableConsumerRecipePanel>",
+  "interfaces": [],
+  "summary": "这是一个用于显示可配置消费者食谱信息的Codex Widget。它继承自CodexWidget，并负责在游戏界面上呈现食谱的名称、描述、结果图标以及所需的材料。此类主要用于《缺氧》游戏的Modding，用来展示自定义食谱信息。  该类依赖于`IConfigurableConsumerOption` 和 `IConfigurableConsumerIngredient` 接口来获取食谱数据。",
+  "keyMethods": [
+    {
+      "name": "CodexConfigurableConsumerRecipePanel(IConfigurableConsumerOption data)",
+      "summary": "构造函数，初始化食谱面板数据。",
+      "parameters": [
+        {
+          "name": "data",
+          "type": "IConfigurableConsumerOption",
+          "description": "包含食谱信息的配置数据。"
+        }
+      ]
+    },
+    {
+      "name": "Configure(GameObject contentGameObject, Transform displayPane, Dictionary<CodexTextStyle, TextStyleSetting> textStyles)",
+      "summary": "配置面板，将食谱数据渲染到游戏界面。它从给定的GameObject中获取UI元素的引用，并使用`IConfigurableConsumerOption`数据填充这些元素。",
+      "parameters": [
+        {
+          "name": "contentGameObject",
+          "type": "GameObject",
+          "description": "包含UI元素的GameObject。"
+        },
+        {
+          "name": "displayPane",
+          "type": "Transform",
+          "description": "显示面板的Transform。"
+        },
+        {
+          "name": "textStyles",
+          "type": "Dictionary<CodexTextStyle, TextStyleSetting>",
+          "description": "文本样式设置。"
+        }
+      ]
+    },
+    {
+      "name": "CreateIngredientRow(IConfigurableConsumerIngredient ingredient)",
+      "summary": "创建一个显示单个配料的行。它使用给定的配料数据创建一个新的UI元素，并设置图标、名称和数量。",
+      "parameters": [
+        {
+          "name": "ingredient",
+          "type": "IConfigurableConsumerIngredient",
+          "description": "单个配料的配置数据。"
+        }
+      ],
+      "return": {
+        "type": "GameObject",
+        "description": "创建的配料行GameObject，如果创建失败则返回null。"
+      }
+    },
+    {
+      "name": "Clear()",
+      "summary": "清除面板，销毁所有配料行GameObject。",
+      "parameters": []
+    }
+  ],
+  "keyProperties": [
+    {
+      "name": "title",
+      "type": "LocText",
+      "summary": "显示食谱名称的LocText组件。"
+    },
+    {
+      "name": "result_description",
+      "type": "LocText",
+      "summary": "显示食谱结果描述的LocText组件。"
+    },
+    {
+      "name": "resultIcon",
+      "type": "Image",
+      "summary": "显示食谱结果图标的Image组件。"
+    },
+    {
+      "name": "ingredient_original",
+      "type": "GameObject",
+      "summary": "配料行UI元素的原型GameObject。"
+    },
+    {
+      "name": "data",
+      "type": "IConfigurableConsumerOption",
+      "summary": "包含食谱信息的配置数据。"
+    },
+    {
+      "name": "_ingredientRows",
+      "type": "GameObject[]",
+      "summary": "包含所有已创建的配料行GameObject的数组。"
+    }
+  ]
+}
