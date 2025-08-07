@@ -6,7 +6,7 @@ import random
 from typing import Optional
 
 
-BASE_URL = "http://127.0.0.1:8080/api" # 使用 127.0.0.1 避免潜在的 localhost 解析问题
+BASE_URL = "http://localhost:8080/api" # 必须使用 localhost 以匹配服务器端监听的主机名
 
 # 全局上下文，用于在测试步骤间传递数据
 class TestContext:
