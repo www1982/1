@@ -1,0 +1,33 @@
+name: Build and Upload Python Test Client
+
+on:
+  push:
+    branches: [main, power]
+  workflow_dispatch: {}
+
+jobs:
+  build-windows-executable:
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          pip install -r python_client/requirements.txt
+
+      - name: Build executable with PyInstaller
+        run: pyinstaller --onefile --name "EZPlay_Test_Client" python_client/ultimate_api_test.py
+
+      - name: Upload Windows executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-Test-Client
+          path: dist/EZPlay_Test_Client.exe
