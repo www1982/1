@@ -2,7 +2,7 @@ name: Build and Upload Python Test Client
 
 on:
   push:
-    branches: [main, power]
+    branches: [main, power, "feature/**"]
   workflow_dispatch: {}
 
 jobs:
